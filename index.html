@@ -119,3 +119,184 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprehensive Word Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    textarea, input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .section {
+      margin: 20px 0;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Comprehensive Word Tool</h1>
+    
+    <!-- Grammar Checker Section -->
+    <div class="section">
+      <h2>Grammar Checker</h2>
+      <textarea id="inputText" rows="6" placeholder="Enter text to check grammar..."></textarea>
+      <button onclick="checkGrammar()">Check Grammar</button>
+      <div id="grammarIssues" class="result-box"></div>
+      <div id="spellingSuggestions" class="result-box"></div>
+    </div>
+
+    <!-- Linking Words Dictionary Section -->
+    <div class="section">
+      <h2>Linking Words Dictionary</h2>
+      <div class="result-box">
+        <p><strong>Moreover</strong>: Used to add further information or to emphasize a point.</p>
+        <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
+        <p><strong>Therefore</strong>: Indicates a result or consequence.</p>
+        <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
+      </div>
+    </div>
+
+    <!-- Word Bank & Synonyms Section -->
+    <div class="section">
+      <h2>Word Dictionary & Thesaurus</h2>
+      <input type="text" id="wordInput" placeholder="Enter a word..." />
+      <button onclick="getSynonyms()">Search</button>
+      <div id="synonymsResult" class="result-box"></div>
+    </div>
+  </div>
+
+  <script>
+    // Grammar Checker Functionality
+    function checkGrammar() {
+      const text = document.getElementById('inputText').value.trim();
+      const grammarIssues = [];
+      const spellingSuggestions = [];
+
+      const sentences = text.split(/(?<=[.!?])\s+/);
+
+      // Grammar Checks
+      sentences.forEach(sentence => {
+        const trimmedSentence = sentence.trim();
+
+        // Check if the first letter is capitalized
+        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
+          grammarIssues.push(`Sentence "${trimmedSentence}" should start with a capital letter.`);
+        }
+
+        // Check for missing punctuation
+        if (!/[.!?]$/.test(trimmedSentence)) {
+          grammarIssues.push(`Sentence "${trimmedSentence}" is missing end punctuation.`);
+        }
+      });
+
+      // Example British vs. American spelling check
+      const spellingCorrections = {
+        color: "colour",
+        organize: "organise",
+        favor: "favour"
+      };
+      Object.keys(spellingCorrections).forEach(word => {
+        if (text.includes(word)) {
+          spellingSuggestions.push(`"${word}" should be "${spellingCorrections[word]}" (British English).`);
+        }
+      });
+
+      // Display Grammar Issues
+      const grammarDiv = document.getElementById('grammarIssues');
+      grammarDiv.innerHTML = grammarIssues.length ? grammarIssues.join('<br>') : "No grammar issues found.";
+
+      // Display Spelling Suggestions
+      const spellingDiv = document.getElementById('spellingSuggestions');
+      spellingDiv.innerHTML = spellingSuggestions.length ? spellingSuggestions.join('<br>') : "No spelling suggestions found.";
+    }
+
+    // Extended Word Bank with Synonyms
+    const wordBank = {
+      "affect": ["influence", "impact", "alter", "change", "modify"],
+      "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
+      "appreciate": ["value", "admire", "respect", "cherish", "recognize"],
+      "brilliant": ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
+      "benevolent": ["kind", "charitable", "compassionate", "generous", "altruistic"],
+      "blatant": ["obvious", "flagrant", "conspicuous", "glaring", "evident"],
+      "clever": ["smart", "intelligent", "bright", "witty", "sharp"],
+      "complicated": ["complex", "intricate", "involved", "convoluted", "tangled"],
+      "contemplate": ["ponder", "consider", "reflect", "think", "meditate"],
+      "diligent": ["hardworking", "industrious", "meticulous", "careful", "thorough"],
+      "devious": ["cunning", "sly", "tricky", "dishonest", "deceptive"],
+      "dramatic": ["theatrical", "intense", "expressive", "striking", "emotional"],
+      "eloquent": ["expressive", "articulate", "fluent", "persuasive", "well-spoken"],
+      "endorse": ["support", "approve", "advocate", "recommend", "back"],
+      "elusive": ["evasive", "tricky", "hard-to-find", "fleeting", "ambiguous"],
+      "famous": ["well-known", "renowned", "celebrated", "prominent", "distinguished"],
+      "fragile": ["delicate", "brittle", "frail", "vulnerable", "breakable"],
+      "flourish": ["thrive", "prosper", "blossom", "succeed", "expand"],
+      "generous": ["charitable", "kind", "giving", "benevolent", "magnanimous"],
+      "genuine": ["authentic", "real", "sincere", "honest", "true"],
+      "gratitude": ["thankfulness", "appreciation", "recognition", "gratefulness"],
+      "honest": ["truthful", "sincere", "straightforward", "candid", "open"],
+      "harmonious": ["peaceful", "balanced", "synchronized", "coordinated", "serene"],
+      "hasty": ["rushed", "hurried", "quick", "impulsive", "swift"],
+      "intelligent": ["smart", "bright", "sharp", "clever", "insightful"],
+      "impressive": ["remarkable", "striking", "stunning", "noteworthy", "extraordinary"],
+      "incredible": ["unbelievable", "astonishing", "amazing", "remarkable", "phenomenal"],
+      "joyful": ["happy", "cheerful", "delighted", "blissful", "content"],
+      "peaceful": ["calm", "serene", "tranquil", "gentle", "harmonious"],
+      "debris": ["wreckage", "rubble", "remains", "shards", "fragments"],
+      "time": ["period", "moment", "duration", "epoch", "era"],
+      "distance": ["length", "range", "interval", "gap", "space"],
+      // Add more entries as needed...
+    };
+
+    // Fetch Synonyms Function
+    function getSynonyms() {
+      const inputWord = document.getElementById("wordInput").value.trim().toLowerCase();
+      const resultDiv = document.getElementById("synonymsResult");
+
+      if (wordBank.hasOwnProperty(inputWord)) {
+        const synonyms = wordBank[inputWord];
+        resultDiv.innerHTML = `<strong>Synonyms for "${inputWord}":</strong> ${synonyms.join(", ")}`;
+      } else {
+        resultDiv.innerHTML = `No synonyms found for "${inputWord}".`;
+      }
+    }
+  </script>
+</body>
+</html>
