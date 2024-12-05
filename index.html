@@ -12,7 +12,7 @@
     .word { font-weight: bold; color: #333; }
     .definition { margin-left: 20px; }
     .examples { margin-left: 20px; font-style: italic; color: #555; }
-    .highlight { background-color: yellow; }
+    .highlight { background-color: yellow; font-weight: bold; }
     #grammar-result { color: red; margin-top: 20px; }
     textarea { width: 100%; height: 150px; margin-bottom: 10px; }
     .suggestion { color: green; font-weight: bold; }
@@ -67,24 +67,18 @@
       let suggestionsOutput = document.getElementById('suggestions-output');
       let resultText = inputText;
 
-      // Grammar Patterns (like missing punctuation)
-      let punctuationPattern = /([a-zA-Z0-9]+)(\s)([a-zA-Z0-9]+)(?=[a-zA-Z0-9])/g;
-      resultText = resultText.replace(punctuationPattern, "<span class='highlight'>$1$2$3</span>");
-
-      // Identifying missing punctuation at the end of sentences
-      let endPunctuation = /[.!?]$/;
-      if (!endPunctuation.test(inputText)) {
-        grammarResult.innerHTML = "Issue: Missing punctuation at the end of this sentence.";
-        resultText += " <span class='highlight'>Suggestion: Please add a full stop, question mark, or exclamation mark.</span>";
-      } else {
-        grammarResult.innerHTML = "No major punctuation errors identified.";
+      // Check if sentence starts with a lowercase letter (missing capital letter)
+      let startCapitalPattern = /^[a-z]/;
+      if (startCapitalPattern.test(inputText)) {
+        grammarResult.innerHTML = "Issue: The first letter should be capitalized.";
+        resultText = resultText.replace(startCapitalPattern, (match) => `<span class='highlight'>${match.toUpperCase()}</span>`);
       }
 
-      // Identifying missing punctuation at the beginning of sentences (capital letter missing)
-      let startPunctuationPattern = /^[a-z]/; // Checks if the sentence starts with a lowercase letter
-      if (startPunctuationPattern.test(inputText)) {
-        grammarResult.innerHTML += "<br>Issue: Sentence starts with a lowercase letter. Please ensure the first letter is capitalized.";
-        resultText = resultText.replace(startPunctuationPattern, (match) => `<span class='highlight'>${match.toUpperCase()}</span>`);
+      // Check for punctuation at the end of the sentence
+      let endPunctuationPattern = /[.!?]$/;
+      if (!endPunctuationPattern.test(inputText)) {
+        grammarResult.innerHTML += "<br>Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.";
+        resultText += " <span class='highlight'>Suggestion: Please add appropriate punctuation.</span>";
       }
 
       // Check for proper nouns (capitalization of names, cities, etc.)
@@ -93,7 +87,7 @@
         resultText = resultText.replace(regex, (match) => `<span class='highlight'>${match.charAt(0).toUpperCase() + match.slice(1)}</span>`);
       });
 
-      // Check for word bank issues (spelling mistakes, common errors)
+      // Check for spelling mistakes from the commonMistakes bank
       let words = inputText.split(' ');
       let correctedText = words.map(word => {
         if (wordBank.commonMistakes[word.toLowerCase()]) {
