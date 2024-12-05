@@ -594,3 +594,47 @@ async function searchThesaurus() {
         resultsDiv.innerHTML += "<br>Couldn't fetch synonyms.";
     }
 }
+// Grammar Checker - LanguageTool API Integration
+async function checkGrammar() {
+    const text = document.getElementById('textInput').value;
+    const resultsDiv = document.getElementById('grammarResults');
+    
+    // Use LanguageTool API to check grammar
+    const response = await fetch('https://api.languagetool.org/v2/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `text=${encodeURIComponent(text)}&language=en-US`,
+    });
+    
+    const data = await response.json();
+    resultsDiv.innerHTML = ''; // Clear previous results
+
+    // Check if any grammar issues were found
+    if (data.matches && data.matches.length > 0) {
+        let highlightedText = text;
+        
+        // Loop through all grammar issues and apply highlights
+        data.matches.forEach(match => {
+            const errorText = match.context.text;
+            const replacement = match.replacements.length > 0 ? match.replacements[0].value : '';
+
+            // Find the error in the text and wrap it with <span class="highlight"> for visual effect
+            highlightedText = highlightedText.replace(errorText, `<span class="highlight">${errorText}</span>`);
+            
+            // Create an issue element to show the suggested correction
+            const issue = document.createElement('div');
+            issue.classList.add('issue');
+            issue.innerHTML = `
+                <strong>Issue:</strong> ${match.message} <br>
+                <strong>Suggested Correction:</strong> ${replacement} <br>
+                <strong>Context:</strong> ${errorText} <br><br>
+            `;
+            resultsDiv.appendChild(issue);
+        });
+
+        // Display the highlighted text
+        document.getElementById('textInput').innerHTML = highlightedText;
+    } else {
+        resultsDiv.innerHTML = 'No grammar or spelling issues found!';
+    }
+}
