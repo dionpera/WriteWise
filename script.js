@@ -471,3 +471,54 @@ document.head.appendChild(style);
 
 // Event listeners
 document.getElementById('textInput').addEventListener('input', applyHighlighting);
+// Grammar Checker - Highlighting Text with Errors
+async function checkGrammar() {
+    const text = document.getElementById('textInput').value;
+    const resultsDiv = document.getElementById('grammarResults');
+    const textContainer = document.getElementById('highlightedText');
+
+    // Send request to LanguageTool API for grammar checking
+    const response = await fetch('https://api.languagetool.org/v2/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `text=${encodeURIComponent(text)}&language=en-US`,
+    });
+
+    const data = await response.json();
+    resultsDiv.innerHTML = ''; // Clear previous results
+    let highlightedText = text; // Start with the original text
+
+    if (data.matches && data.matches.length > 0) {
+        // Iterate over grammar issues and highlight them
+        data.matches.forEach(match => {
+            const start = match.offset;
+            const end = start + match.length;
+            const errorText = match.message;
+            const replacement = match.replacements.length > 0 ? match.replacements[0].value : 'No suggestion';
+
+            // Highlight the issue in the text
+            highlightedText = highlightedText.substring(0, start) + 
+                `<span class="highlight" title="${errorText}">${highlightedText.substring(start, end)}</span>` + 
+                highlightedText.substring(end);
+        });
+
+        // Display highlighted text in the div
+        textContainer.innerHTML = highlightedText; // Update with highlighted text
+        resultsDiv.innerHTML = 'Grammar issues highlighted above.';
+    } else {
+        resultsDiv.innerHTML = 'No grammar or spelling issues found!';
+        textContainer.innerHTML = text; // Show original text if no issues
+    }
+}
+
+// Add styles for highlighting
+const style = document.createElement('style');
+style.innerHTML = `
+    .highlight {
+        background-color: yellow;
+        color: black;
+        border-radius: 4px;
+        padding: 0 4px;
+    }
+`;
+document.head.appendChild(style);
