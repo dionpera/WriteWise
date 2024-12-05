@@ -34,7 +34,7 @@
   <h2>Linking Words Dictionary</h2>
   <div class="word-container">
     <p class="word">Moreover</p>
-    <p class="definition">Used to add further information or to emphasize a point.</p>
+    <p class="definition">Used to add further information or to emphasise a point.</p>
     <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
   </div>
   <div class="word-container">
@@ -54,21 +54,23 @@
       let sentences = text.split(/(?<=[.!?])\s+/); // Split text into sentences using punctuation
       sentences.forEach((sentence, index) => {
         let trimmedSentence = sentence.trim();
+        
+        // Check if the first letter is capitalised
         if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
           grammarIssues.push({
             issue: "The first letter of the sentence should be capitalised.",
             sentence: `"${trimmedSentence}"`
           });
         }
-      });
 
-      // Check for missing punctuation at the end of a sentence
-      if (!/[.!?]$/.test(text.trim())) {
-        grammarIssues.push({
-          issue: "Missing punctuation at the end of the sentence. Please add a full stop, question mark, or exclamation mark.",
-          sentence: `"${text.trim()}"`
-        });
-      }
+        // Check if there's missing punctuation at the end of the sentence
+        if (!/[.!?]$/.test(trimmedSentence)) {
+          grammarIssues.push({
+            issue: "Missing punctuation at the end of the sentence. Please add a full stop, question mark, or exclamation mark.",
+            sentence: `"${trimmedSentence}"`
+          });
+        }
+      });
 
       // Check for common British spelling mistakes
       const commonMisspellings = {
@@ -77,7 +79,11 @@
         "organize": "organise",
         "center": "centre",
         "theater": "theatre",
-        "defense": "defence"
+        "defense": "defence",
+        "travelling": "travelling", // "Traveling" in American, "Travelling" in British English
+        "favourite": "favourite",
+        "honor": "honour",
+        "organised": "organised" // Adjusted as per British English
       };
 
       // Check for misspellings (you can expand this dictionary)
