@@ -3,99 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WriteWise Grammar Checker</title>
+  <title>Essay Linking Words Dictionary & Grammar Checker</title>
   <style>
     body { font-family: Arial, sans-serif; }
-    .container { max-width: 800px; margin: 20px auto; padding: 20px; }
-    h1, h2 { text-align: center; color: #333; }
-    .highlight { background-color: yellow; font-weight: bold; }
-    #grammar-result { color: red; margin-top: 20px; }
-    textarea { width: 100%; height: 150px; margin-bottom: 10px; }
-    .suggestion { color: green; font-weight: bold; }
-    .output-box { margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px; }
+    .word-container { margin-bottom: 20px; }
+    .word { font-weight: bold; color: #333; }
+    .definition { margin-left: 20px; }
+    .examples { margin-left: 20px; font-style: italic; color: #555; }
+    .highlight { background-color: yellow; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>WriteWise Grammar Checker</h1>
-
-    <!-- Grammar Checker Section -->
-    <h2>Grammar Checker</h2>
-    <textarea id="text-input" placeholder="Enter text to check grammar..."></textarea>
+  <h1>Linking Words Dictionary & Grammar Checker</h1>
+  
+  <!-- Grammar Checker Section -->
+  <h2>Grammar Checker</h2>
+  <div>
+    <textarea id="inputText" rows="6" cols="50" placeholder="Enter text to check grammar..."></textarea>
+    <br>
     <button onclick="checkGrammar()">Check Grammar</button>
-    <div id="grammar-result"></div>
-
-    <!-- Suggestions Output -->
-    <div id="suggestions-output" class="output-box"></div>
   </div>
+  
+  <h3>Grammar Issues:</h3>
+  <div id="grammarIssues"></div>
+  
+  <h3>Spelling Suggestions:</h3>
+  <div id="spellingSuggestions"></div>
+  
+  <!-- Linking Words Dictionary Section -->
+  <h2>Linking Words Dictionary</h2>
+  <div class="word-container">
+    <p class="word">Moreover</p>
+    <p class="definition">Used to add further information or to emphasize a point.</p>
+    <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
+  </div>
+  <div class="word-container">
+    <p class="word">Therefore</p>
+    <p class="definition">Indicates a result or consequence.</p>
+    <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
+  </div>
+  <!-- You can add more words and examples here -->
 
   <script>
-    // Basic Common Mistakes for Spelling Check
-    const commonMistakes = {
-      "teh": "the",
-      "recieve": "receive",
-      "alot": "a lot",
-      "wich": "which",
-      "definately": "definitely"
-    };
-
     function checkGrammar() {
-      let inputText = document.getElementById('text-input').value;
-      let grammarResult = document.getElementById('grammar-result');
-      let suggestionsOutput = document.getElementById('suggestions-output');
-      let resultText = inputText;
-
-      // Initialize results
-      let issuesFound = false;
-      let issueMessages = [];
-
-      // Step 1: Capitalization check - Ensure the first word of each sentence starts with a capital letter
-      let sentences = inputText.split(/([.!?])/);  // Split the text into sentences based on punctuation
-      sentences = sentences.filter(Boolean);  // Remove empty items
-
-      sentences.forEach((sentence, index) => {
-        let trimmedSentence = sentence.trim();
-        // Check if the first letter of the sentence is capitalized
-        if (trimmedSentence && trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
-          issuesFound = true;
-          issueMessages.push(`Issue: The first letter of the sentence should be capitalized. Sentence: "${trimmedSentence}"`);
-          // Capitalize the first letter
-          sentences[index] = trimmedSentence.charAt(0).toUpperCase() + trimmedSentence.slice(1);
-        }
-      });
-
-      // Rejoin sentences after fixing capitalization
-      resultText = sentences.join(' ');
-
-      // Step 2: Check for punctuation at the end of each sentence
-      let punctuationPattern = /[.!?]$/;
-      sentences.forEach((sentence, index) => {
-        if (!punctuationPattern.test(sentence.trim())) {
-          issuesFound = true;
-          issueMessages.push(`Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark. Sentence: "${sentence.trim()}"`);
-          // Add a period if missing
-          sentences[index] = sentence.trim() + '.';
-        }
-      });
-
-      // Step 3: Spelling check
-      let words = resultText.split(' ');
-      let correctedText = words.map(word => {
-        if (commonMistakes[word.toLowerCase()]) {
-          return `<span class='highlight'>${word} (Did you mean "${commonMistakes[word.toLowerCase()]}?")</span>`;
-        }
-        return word;
-      }).join(' ');
-
-      suggestionsOutput.innerHTML = `<p><b>Spelling Suggestions:</b> ${correctedText}</p>`;
-
-      if (issuesFound) {
-        grammarResult.innerHTML = issueMessages.join("<br>");
-      } else {
-        grammarResult.innerHTML = "No grammar or punctuation issues found!";
+      let text = document.getElementById('inputText').value;
+      let grammarIssues = [];
+      let spellingSuggestions = [];
+      
+      // Check for missing capital letter at the beginning of a sentence
+      if (text.charAt(0) !== text.charAt(0).toUpperCase()) {
+        grammarIssues.push({
+          issue: "The first letter of the sentence should be capitalized.",
+          sentence: `"${text.trim()}"`
+        });
+      }
+      
+      // Check for missing punctuation at the end of a sentence
+      if (!/[.!?]$/.test(text.trim())) {
+        grammarIssues.push({
+          issue: "Missing punctuation at the end of the sentence. Please add a full stop, question mark, or exclamation mark.",
+          sentence: `"${text.trim()}"`
+        });
       }
 
-      document.getElementById('text-input').value = resultText;
+      // Check for common spelling mistakes (simple example)
+      const commonMisspellings = {
+        "colour": "color",
+        "realise": "realize",
+        "organise": "organize",
+        "centre": "center"
+      };
+
+      // Check for misspellings (you can expand this dictionary)
+      Object.keys(commonMisspellings).forEach((correctSpelling) => {
+        let regex = new RegExp("\\b" + correctSpelling + "\\b", "gi");
+        if (text.match(regex)) {
+          let misspelledWord = text.match(regex)[0];
+          spellingSuggestions.push({
+            incorrect: misspelledWord,
+            suggestion: commonMisspellings[correctSpelling]
+          });
+        }
+      });
+
+      // Display the grammar issues
+      let grammarDiv = document.getElementById('grammarIssues');
+      grammarDiv.innerHTML = "";
+      grammarIssues.forEach(issue => {
+        grammarDiv.innerHTML += `<p>Issue: ${issue.issue} Sentence: ${issue.sentence}</p>`;
+      });
+
+      // Display the spelling suggestions
+      let spellingDiv = document.getElementById('spellingSuggestions');
+      spellingDiv.innerHTML = "";
+      spellingSuggestions.forEach(suggestion => {
+        spellingDiv.innerHTML += `<p>Spelling Suggestion: ${suggestion.incorrect} (Did you mean "${suggestion.suggestion}"?)</p>`;
+      });
+      
+      // Highlight the text
+      highlightText(text, grammarIssues);
+    }
+
+    function highlightText(text, grammarIssues) {
+      let highlightedText = text;
+
+      // Highlight grammar issues
+      grammarIssues.forEach(issue => {
+        highlightedText = highlightedText.replace(issue.sentence, `<span class="highlight">${issue.sentence}</span>`);
+      });
+
+      // Replace the content with highlighted text
+      document.getElementById('inputText').value = highlightedText;
     }
   </script>
 </body>
