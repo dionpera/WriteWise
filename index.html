@@ -67,21 +67,31 @@
       let suggestionsOutput = document.getElementById('suggestions-output');
       let resultText = inputText;
 
-      // Check if sentence starts with a lowercase letter (missing capital letter)
-      let startCapitalPattern = /^[a-z]/;
+      // Initialize results
+      let issuesFound = false;
+      let issueMessages = [];
+
+      // Check if the first letter is lowercase (missing capitalization)
       let firstLetter = inputText.trim().charAt(0);
-      
-      // Check if first letter is lowercase (ignores leading spaces)
-      if (startCapitalPattern.test(firstLetter)) {
-        grammarResult.innerHTML = "Issue: The first letter should be capitalized.";
+      if (firstLetter && firstLetter === firstLetter.toLowerCase()) {
+        issuesFound = true;
+        issueMessages.push("Issue: The first letter should be capitalized.");
         resultText = resultText.replace(firstLetter, firstLetter.toUpperCase());
       }
 
       // Check for punctuation at the end of the sentence
       let endPunctuationPattern = /[.!?]$/;
-      if (!endPunctuationPattern.test(inputText)) {
-        grammarResult.innerHTML += "<br>Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.";
+      if (!endPunctuationPattern.test(inputText.trim())) {
+        issuesFound = true;
+        issueMessages.push("Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.");
         resultText += " <span class='highlight'>Suggestion: Please add appropriate punctuation.</span>";
+      }
+
+      // Check for missing commas in a series of items (e.g., "My house is number 30 i love living there.")
+      let missingCommaPattern = /\b(\w+)\s(\w+)\s/;
+      if (missingCommaPattern.test(inputText)) {
+        issuesFound = true;
+        issueMessages.push("Issue: Possible missing comma between phrases.");
       }
 
       // Check for proper nouns (capitalization of names, cities, etc.)
@@ -100,6 +110,13 @@
       }).join(' ');
 
       suggestionsOutput.innerHTML = `<p><b>Spelling Suggestions:</b> ${correctedText}</p>`;
+
+      if (issuesFound) {
+        grammarResult.innerHTML = issueMessages.join("<br>");
+      } else {
+        grammarResult.innerHTML = "No grammar or punctuation issues found!";
+      }
+
       document.getElementById('text-input').value = resultText;
     }
   </script>
