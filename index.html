@@ -54,18 +54,23 @@
         "teh": "the",
         "recieve": "receive",
         "alot": "a lot",
-      }
+        "wich": "which",
+        "definately": "definitely",
+        "occurred": "occurred"
+      },
+      properNouns: ["New York", "John", "Sarah", "London", "Paris"] // List of proper nouns (cities, names, etc.)
     };
 
     function checkGrammar() {
       let inputText = document.getElementById('text-input').value;
       let grammarResult = document.getElementById('grammar-result');
       let suggestionsOutput = document.getElementById('suggestions-output');
+      let resultText = inputText;
 
       // Grammar Patterns (like missing punctuation)
       let punctuationPattern = /([a-zA-Z0-9]+)(\s)([a-zA-Z0-9]+)(?=[a-zA-Z0-9])/g;
-      let resultText = inputText.replace(punctuationPattern, "<span class='highlight'>$1$2$3</span>");
-      
+      resultText = resultText.replace(punctuationPattern, "<span class='highlight'>$1$2$3</span>");
+
       // Identifying missing punctuation at the end of sentences
       let endPunctuation = /[.!?]$/;
       if (!endPunctuation.test(inputText)) {
@@ -75,12 +80,18 @@
         grammarResult.innerHTML = "No major punctuation errors identified.";
       }
 
-      // Identifying missing punctuation at the beginning of sentences (capital letter missing, punctuation needed)
+      // Identifying missing punctuation at the beginning of sentences (capital letter missing)
       let startPunctuationPattern = /^[a-z]/; // Checks if the sentence starts with a lowercase letter
       if (startPunctuationPattern.test(inputText)) {
         grammarResult.innerHTML += "<br>Issue: Sentence starts with a lowercase letter. Please ensure the first letter is capitalized.";
         resultText = resultText.replace(startPunctuationPattern, (match) => `<span class='highlight'>${match.toUpperCase()}</span>`);
       }
+
+      // Check for proper nouns (capitalization of names, cities, etc.)
+      wordBank.properNouns.forEach(noun => {
+        let regex = new RegExp(`\\b${noun.toLowerCase()}\\b`, 'g');
+        resultText = resultText.replace(regex, (match) => `<span class='highlight'>${match.charAt(0).toUpperCase() + match.slice(1)}</span>`);
+      });
 
       // Check for word bank issues (spelling mistakes, common errors)
       let words = inputText.split(' ');
