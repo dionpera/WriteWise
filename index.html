@@ -71,37 +71,34 @@
       let issuesFound = false;
       let issueMessages = [];
 
-      // Check if the first letter is lowercase (missing capitalization)
-      let firstLetter = inputText.trim().charAt(0);
+      // Step 1: Check capitalization of the first letter of the sentence
+      let trimmedText = inputText.trim();
+      let firstLetter = trimmedText.charAt(0);
+      
       if (firstLetter && firstLetter === firstLetter.toLowerCase()) {
         issuesFound = true;
-        issueMessages.push("Issue: The first letter should be capitalized.");
+        issueMessages.push("Issue: The first letter of the sentence should be capitalized.");
         resultText = resultText.replace(firstLetter, firstLetter.toUpperCase());
       }
 
-      // Check for punctuation at the end of the sentence
+      // Step 2: Check for missing punctuation at the end of the sentence
       let endPunctuationPattern = /[.!?]$/;
-      if (!endPunctuationPattern.test(inputText.trim())) {
+      if (!endPunctuationPattern.test(trimmedText)) {
         issuesFound = true;
         issueMessages.push("Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.");
         resultText += " <span class='highlight'>Suggestion: Please add appropriate punctuation.</span>";
       }
 
-      // Check for missing commas in a series of items (e.g., "My house is number 30 i love living there.")
-      let missingCommaPattern = /\b(\w+)\s(\w+)\s/;
-      if (missingCommaPattern.test(inputText)) {
-        issuesFound = true;
-        issueMessages.push("Issue: Possible missing comma between phrases.");
-      }
-
-      // Check for proper nouns (capitalization of names, cities, etc.)
+      // Step 3: Check for capitalization of proper nouns
       wordBank.properNouns.forEach(noun => {
         let regex = new RegExp(`\\b${noun.toLowerCase()}\\b`, 'g');
-        resultText = resultText.replace(regex, (match) => `<span class='highlight'>${match.charAt(0).toUpperCase() + match.slice(1)}</span>`);
+        resultText = resultText.replace(regex, (match) => {
+          return `<span class='highlight'>${match.charAt(0).toUpperCase() + match.slice(1)}</span>`;
+        });
       });
 
-      // Check for spelling mistakes from the commonMistakes bank
-      let words = inputText.split(' ');
+      // Step 4: Check for spelling mistakes from the commonMistakes bank
+      let words = trimmedText.split(' ');
       let correctedText = words.map(word => {
         if (wordBank.commonMistakes[word.toLowerCase()]) {
           return `<span class='highlight'>${word} (Did you mean "${wordBank.commonMistakes[word.toLowerCase()]}?")</span>`;
