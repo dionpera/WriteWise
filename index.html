@@ -48,15 +48,6 @@
         <div id="grammarResult"></div>
     </div>
 
-    <!-- Dictionary and Thesaurus Section -->
-    <div class="section">
-        <h2>Word Dictionary & Thesaurus</h2>
-        <label for="dictionaryInput">Enter a word for definition:</label>
-        <input type="text" id="dictionaryInput" placeholder="Enter word">
-        <button onclick="getDictionaryInfo()">Get Definition & Thesaurus</button>
-        <div id="dictionaryResult"></div>
-    </div>
-
     <!-- Linking Words Dictionary Section -->
     <div class="section">
         <h2>Linking Words Dictionary</h2>
@@ -75,7 +66,7 @@
     </div>
 
     <script>
-        // Synonym Bank (internal word bank)
+        // Internal Word Bank
         const wordBank = {
             "affect": ["influence", "impact", "alter", "change", "modify"],
             "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
@@ -116,6 +107,7 @@
             const inputWord = document.getElementById("wordInput").value.trim().toLowerCase();
             const resultDiv = document.getElementById("synonymsResult");
 
+            // Search for synonyms in the word bank (case-insensitive)
             if (inputWord && wordBank[inputWord]) {
                 const synonyms = wordBank[inputWord];
                 resultDiv.innerHTML = `<strong>Synonyms for "${inputWord}":</strong> ${synonyms.join(", ")}`;
@@ -151,30 +143,6 @@
             } else {
                 resultDiv.innerHTML = "No grammar issues found!";
             }
-        }
-
-        // Dictionary & Thesaurus function (Link to external dictionary)
-        function getDictionaryInfo() {
-            const word = document.getElementById("dictionaryInput").value.trim().toLowerCase();
-            const resultDiv = document.getElementById("dictionaryResult");
-
-            if (!word) {
-                resultDiv.innerHTML = "Please enter a word.";
-                return;
-            }
-
-            if (wordBank[word]) {
-                resultDiv.innerHTML = `<strong>Synonyms for "${word}":</strong><ul>`;
-                wordBank[word].forEach(synonym => {
-                    resultDiv.innerHTML += `<li>${synonym}</li>`;
-                });
-                resultDiv.innerHTML += "</ul>";
-            } else {
-                resultDiv.innerHTML = `No synonyms found for "${word}".`;
-            }
-
-            // External Dictionary/Thesaurus Link (Wordnik or any other site)
-            resultDiv.innerHTML += `<br><a href="https://www.wordnik.com/words/${word}" target="_blank">More details on Wordnik</a>`;
         }
     </script>
 </body>
