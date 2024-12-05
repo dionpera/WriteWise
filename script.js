@@ -312,6 +312,53 @@ async function checkGrammar() {
                 `<span class="highlight" title="${errorText}">${highlightedText.substring(start, end)}</span>` + 
                 highlightedText.substring(end);
         });
+async function searchThesaurus() {
+    const word = document.getElementById('wordInput').value;
+    const resultsDiv = document.getElementById('thesaurusResults');
+    
+    if (!word) {
+        resultsDiv.innerHTML = "Please enter a word.";
+        return;
+    }
+
+    // Fetch the word data from the dictionary API for definitions
+    const dictionaryResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const dictionaryData = await dictionaryResponse.json();
+
+    // Check if dictionary data exists
+    if (dictionaryData && dictionaryData[0] && dictionaryData[0].meanings) {
+        let meanings = dictionaryData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+        resultsDiv.innerHTML = "<strong>Definitions:</strong><br>" + meanings;
+    } else {
+        resultsDiv.innerHTML = 'No dictionary results found for that word.';
+    }
+
+    // Fetch synonyms from the WordsAPI (for thesaurus)
+    try {
+        const thesaurusResponse = await fetch(`https://wordsapi.com/docs/#synonym/${word}`, {
+            headers: { "Authorization": "Bearer YOUR_API_KEY" } // Replace with your API key
+        });
+        const thesaurusData = await thesaurusResponse.json();
+        
+        if (thesaurusData && thesaurusData.synonyms && thesaurusData.synonyms.length > 0) {
+            const synonyms = thesaurusData.synonyms.map(synonym => `<li>${synonym}</li>`).join('');
+            resultsDiv.innerHTML += `<br><strong>Synonyms:</strong><br><ul>${synonyms}</ul>`;
+        } else {
+            resultsDiv.innerHTML += `<br>No synonyms found for that word.`;
+        }
+    } catch (error) {
+        console.error("Error fetching synonyms:", error);
+        resultsDiv.innerHTML += "<br>Couldn't fetch synonyms.";
+    }
+}
+console.log(dictionaryData);
+console.log(thesaurusData);
 
         // Display highlighted text
         textArea.innerHTML = highlightedText;
