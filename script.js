@@ -320,3 +320,51 @@ async function checkGrammar() {
         resultsDiv.innerHTML = 'No grammar or spelling issues found!';
     }
 }
+// Thesaurus and Dictionary Search
+async function searchThesaurus() {
+    const word = document.getElementById('wordInput').value;
+    const resultsDiv = document.getElementById('thesaurusResults');
+    const dictionaryDiv = document.getElementById('dictionaryResults');
+    
+    if (!word) {
+        resultsDiv.innerHTML = "Please enter a word.";
+        dictionaryDiv.innerHTML = '';
+        return;
+    }
+
+    // Search Thesaurus
+    const thesaurusResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const thesaurusData = await thesaurusResponse.json();
+
+    if (thesaurusData && thesaurusData[0] && thesaurusData[0].meanings) {
+        const meanings = thesaurusData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+
+        resultsDiv.innerHTML = meanings;
+    } else {
+        resultsDiv.innerHTML = 'No results found for that word.';
+    }
+
+    // Search Dictionary
+    const dictionaryResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const dictionaryData = await dictionaryResponse.json();
+
+    if (dictionaryData && dictionaryData[0] && dictionaryData[0].meanings) {
+        const definitions = dictionaryData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+
+        dictionaryDiv.innerHTML = definitions;
+    } else {
+        dictionaryDiv.innerHTML = 'No dictionary results found.';
+    }
+}
