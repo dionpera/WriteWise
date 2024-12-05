@@ -3,115 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WriteWise Grammar Checker & Dictionary</title>
+  <title>Essay Linking Words Dictionary & Grammar Checker</title>
   <style>
     body { font-family: Arial, sans-serif; }
-    .container { max-width: 800px; margin: 20px auto; padding: 20px; }
-    h1, h2 { text-align: center; color: #333; }
     .word-container { margin-bottom: 20px; }
     .word { font-weight: bold; color: #333; }
     .definition { margin-left: 20px; }
     .examples { margin-left: 20px; font-style: italic; color: #555; }
-    .highlight { background-color: yellow; font-weight: bold; }
-    #grammar-result { color: red; margin-top: 20px; }
-    textarea { width: 100%; height: 150px; margin-bottom: 10px; }
-    .suggestion { color: green; font-weight: bold; }
-    .output-box { margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px; }
-    .synonym { color: blue; font-weight: bold; }
+    .highlight { background-color: yellow; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>WriteWise Grammar Checker & Dictionary</h1>
-
-    <!-- Grammar Checker Section -->
-    <h2>Grammar Checker</h2>
-    <textarea id="text-input" placeholder="Enter text to check grammar..."></textarea>
+  <h1>Linking Words Dictionary & Grammar Checker</h1>
+  
+  <!-- Grammar Checker Section -->
+  <h2>Grammar Checker</h2>
+  <div>
+    <textarea id="inputText" rows="6" cols="50" placeholder="Enter text to check grammar..."></textarea>
+    <br>
     <button onclick="checkGrammar()">Check Grammar</button>
-    <div id="grammar-result"></div>
-
-    <!-- Word Dictionary & Thesaurus Section -->
-    <h2>Dictionary & Thesaurus</h2>
-    <div class="word-container">
-      <p class="word">Moreover</p>
-      <p class="definition">Used to add further information or to emphasize a point.</p>
-      <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
-    </div>
-    <div class="word-container">
-      <p class="word">Therefore</p>
-      <p class="definition">Indicates a result or consequence.</p>
-      <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
-    </div>
-
-    <input type="text" id="word-input" placeholder="Enter word to find synonyms..." />
-    <button onclick="findSynonyms()">Find Synonyms</button>
-    <div id="synonym-result"></div>
-
-    <!-- Suggestions Output -->
-    <div id="suggestions-output" class="output-box"></div>
+  </div>
+  
+  <h3>Grammar Issues:</h3>
+  <div id="grammarIssues"></div>
+  
+  <h3>Spelling Suggestions:</h3>
+  <div id="spellingSuggestions"></div>
+  
+  <!-- Linking Words Dictionary Section -->
+  <h2>Linking Words Dictionary</h2>
+  <div class="word-container">
+    <p class="word">Moreover</p>
+    <p class="definition">Used to add further information or to emphasise a point.</p>
+    <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
+  </div>
+  <div class="word-container">
+    <p class="word">Therefore</p>
+    <p class="definition">Indicates a result or consequence.</p>
+    <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
   </div>
 
+  <!-- Thesaurus Section -->
+  <h2>Thesaurus</h2>
+  <div>
+    <input type="text" id="wordInput" placeholder="Enter a word for synonyms...">
+    <button onclick="getSynonyms()">Get Synonyms</button>
+  </div>
+  
+  <h3>Synonyms:</h3>
+  <div id="synonymsResult"></div>
+
   <script>
-    // Word Bank (Dictionary + Synonyms)
-    const wordBank = {
-      "house": {
-        definition: "A building for human habitation, especially one that is lived in by a family or small group of people.",
-        synonyms: ["home", "residence", "dwelling", "abode", "place"]
-      },
-      "car": {
-        definition: "A road vehicle, typically with four wheels, powered by an internal combustion engine or electric motor.",
-        synonyms: ["automobile", "vehicle", "motorcar", "ride"]
-      },
-      "happy": {
-        definition: "Feeling or showing pleasure or contentment.",
-        synonyms: ["joyful", "content", "cheerful", "delighted", "glad"]
-      },
-      "sad": {
-        definition: "Feeling or showing sorrow; unhappy.",
-        synonyms: ["unhappy", "sorrowful", "downcast", "mournful", "despondent"]
-      },
-      // Add more words here with their definitions and synonyms
-    };
-
-    // Grammar Check Function
+    // Function to check grammar
     function checkGrammar() {
-      let inputText = document.getElementById('text-input').value;
-      let grammarResult = document.getElementById('grammar-result');
-      let suggestionsOutput = document.getElementById('suggestions-output');
-      let resultText = inputText;
-
-      // Check if sentence starts with a lowercase letter (missing capital letter)
-      let startCapitalPattern = /^[a-z]/;
-      let firstLetter = inputText.trim().charAt(0);
+      let text = document.getElementById('inputText').value;
+      let grammarIssues = [];
+      let spellingSuggestions = [];
       
-      // Check if first letter is lowercase (ignores leading spaces)
-      if (startCapitalPattern.test(firstLetter)) {
-        grammarResult.innerHTML = "Issue: The first letter should be capitalized.";
-        resultText = resultText.replace(firstLetter, firstLetter.toUpperCase());
-      }
+      // Check for missing capital letter at the beginning of a sentence
+      let sentences = text.split(/(?<=[.!?])\s+/); // Split text into sentences using punctuation
+      sentences.forEach((sentence, index) => {
+        let trimmedSentence = sentence.trim();
+        
+        // Check if the first letter is capitalised
+        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
+          grammarIssues.push({
+            issue: "The first letter of the sentence should be capitalised.",
+            sentence: `"${trimmedSentence}"`
+          });
+        }
 
-      // Check for punctuation at the end of the sentence
-      let endPunctuationPattern = /[.!?]$/;
-      if (!endPunctuationPattern.test(inputText)) {
-        grammarResult.innerHTML += "<br>Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.";
-        resultText += " <span class='highlight'>Suggestion: Please add appropriate punctuation.</span>";
-      }
+        // Check if there's missing punctuation at the end of the sentence
+        if (!/[.!?]$/.test(trimmedSentence)) {
+          grammarIssues.push({
+            issue: "Missing punctuation at the end of the sentence. Please add a full stop, question mark, or exclamation mark.",
+            sentence: `"${trimmedSentence}"`
+          });
+        }
+      });
 
-      // Display corrected text
-      document.getElementById('text-input').value = resultText;
+      // Check for common British spelling mistakes
+      const commonMisspellings = {
+        "color": "colour",
+        "realize": "realise",
+        "organize": "organise",
+        "center": "centre",
+        "theater": "theatre",
+        "defense": "defence",
+        "travelling": "travelling", // "Traveling" in American, "Travelling" in British English
+        "favourite": "favourite",
+        "honor": "honour",
+        "organised": "organised" // Adjusted as per British English
+      };
+
+      // Check for misspellings (you can expand this dictionary)
+      Object.keys(commonMisspellings).forEach((correctSpelling) => {
+        let regex = new RegExp("\\b" + correctSpelling + "\\b", "gi");
+        if (text.match(regex)) {
+          let misspelledWord = text.match(regex)[0];
+          spellingSuggestions.push({
+            incorrect: misspelledWord,
+            suggestion: commonMisspellings[correctSpelling]
+          });
+        }
+      });
+
+      // Display the grammar issues
+      let grammarDiv = document.getElementById('grammarIssues');
+      grammarDiv.innerHTML = "";
+      grammarIssues.forEach(issue => {
+        grammarDiv.innerHTML += `<p>Issue: ${issue.issue} Sentence: ${issue.sentence}</p>`;
+      });
+
+      // Display the spelling suggestions
+      let spellingDiv = document.getElementById('spellingSuggestions');
+      spellingDiv.innerHTML = "";
+      spellingSuggestions.forEach(suggestion => {
+        spellingDiv.innerHTML += `<p>Spelling Suggestion: ${suggestion.incorrect} (Did you mean "${suggestion.suggestion}"?)</p>`;
+      });
+      
+      // Highlight the text
+      highlightText(text, grammarIssues);
     }
 
-    // Function to find synonyms
-    function findSynonyms() {
-      let wordInput = document.getElementById('word-input').value.trim().toLowerCase();
-      let synonymResult = document.getElementById('synonym-result');
+    // Function to highlight text
+    function highlightText(text, grammarIssues) {
+      let highlightedText = text;
 
-      if (wordBank[wordInput]) {
-        let synonyms = wordBank[wordInput].synonyms;
-        let synonymsText = `Synonyms for "${wordInput}": ` + synonyms.join(", ");
-        synonymResult.innerHTML = `<p class="synonym">${synonymsText}</p>`;
+      // Highlight grammar issues
+      grammarIssues.forEach(issue => {
+        highlightedText = highlightedText.replace(issue.sentence, `<span class="highlight">${issue.sentence}</span>`);
+      });
+
+      // Replace the content with highlighted text
+      document.getElementById('inputText').value = highlightedText;
+    }
+
+    // Function to get synonyms for a word
+    function getSynonyms() {
+      let word = document.getElementById("wordInput").value.trim().toLowerCase();
+      let synonyms = {
+        "dog": ["hound", "puppy", "canine", "pooch"],
+        "happy": ["joyful", "cheerful", "content", "elated"],
+        "fast": ["quick", "speedy", "rapid", "swift"],
+        "sad": ["unhappy", "sorrowful", "downcast", "melancholy"]
+      };
+
+      // Check if the word exists in the synonyms object
+      let resultDiv = document.getElementById("synonymsResult");
+      if (synonyms[word]) {
+        resultDiv.innerHTML = `<p>Synonyms for <strong>${word}</strong>: ${synonyms[word].join(", ")}</p>`;
       } else {
-        synonymResult.innerHTML = `<p>No synonyms found for "${wordInput}".</p>`;
+        resultDiv.innerHTML = `<p>No synonyms found for "<strong>${word}</strong>".</p>`;
       }
     }
   </script>
