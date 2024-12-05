@@ -688,3 +688,4 @@ async function checkGrammar() {
 "word": ["synonym1", "synonym2", "synonym3"]
 "good": ["great", "decent", "excellent", "fine"],
 "bad": ["awful", "poor", "subpar"]
+let url = `https://api.datamuse.com/words?rel_syn=${word}&rel_trg=${word}&rel_ant=${word}&max=5`;
