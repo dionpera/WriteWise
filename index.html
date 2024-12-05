@@ -4,37 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synonym Finder, Grammar Checker, and Dictionary</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .result-box {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <h1>Synonym Finder, Grammar Checker, and Dictionary</h1>
-    
-    <!-- Synonym Finder Section -->
-    <h2>Synonym Finder</h2>
-    <label for="wordInput">Enter a word:</label>
-    <input type="text" id="wordInput" placeholder="Enter word">
-    <button onclick="getSynonyms()">Find Synonyms</button>
-    <div id="synonymsResult"></div>
 
-    <hr>
+    <!-- Synonym Finder Section -->
+    <div class="section">
+        <h2>Synonym Finder</h2>
+        <label for="wordInput">Enter a word for synonyms:</label>
+        <input type="text" id="wordInput" placeholder="Enter word">
+        <button onclick="getSynonyms()">Find Synonyms</button>
+        <div id="synonymsResult"></div>
+    </div>
 
     <!-- Grammar Checker Section -->
-    <h2>Grammar Checker</h2>
-    <label for="grammarInput">Enter text to check grammar:</label>
-    <textarea id="grammarInput" rows="4" cols="50" placeholder="Type text here..."></textarea>
-    <button onclick="checkGrammar()">Check Grammar</button>
-    <div id="grammarResult"></div>
+    <div class="section">
+        <h2>Grammar Checker</h2>
+        <label for="grammarInput">Enter text for grammar check:</label>
+        <textarea id="grammarInput" placeholder="Enter your text here..." rows="5" cols="50"></textarea>
+        <button onclick="checkGrammar()">Check Grammar</button>
+        <div id="grammarResult"></div>
+    </div>
 
-    <hr>
+    <!-- Dictionary and Thesaurus Section -->
+    <div class="section">
+        <h2>Word Dictionary & Thesaurus</h2>
+        <label for="dictionaryInput">Enter a word for definition:</label>
+        <input type="text" id="dictionaryInput" placeholder="Enter word">
+        <button onclick="getDictionaryInfo()">Get Definition & Thesaurus</button>
+        <div id="dictionaryResult"></div>
+    </div>
 
-    <!-- Link to Dictionary/Thesaurus Section -->
-    <h2>Dictionary and Thesaurus</h2>
-    <label for="dictionaryInput">Enter a word to find its meaning:</label>
-    <input type="text" id="dictionaryInput" placeholder="Enter word">
-    <button onclick="findDictionary()">Find Definition</button>
-    <div id="dictionaryResult"></div>
+    <!-- Linking Words Dictionary Section -->
+    <div class="section">
+        <h2>Linking Words Dictionary</h2>
+        <div class="result-box">
+            <p><strong>Moreover</strong>: Used to add further information or to emphasize a point.</p>
+            <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
+            <p><strong>Therefore</strong>: Indicates a result or consequence.</p>
+            <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
+            <p><strong>However</strong>: Used to introduce a contrast or contradiction.</p>
+            <p>Example: "I wanted to go to the park. <strong>However</strong>, it started to rain."</p>
+            <p><strong>Additionally</strong>: Used to add more information.</p>
+            <p>Example: "The company offers excellent benefits. <strong>Additionally</strong>, the work environment is fantastic."</p>
+            <p><strong>Consequently</strong>: Indicates a result or outcome.</p>
+            <p>Example: "She didn't submit the report on time. <strong>Consequently</strong>, her promotion was delayed."</p>
+        </div>
+    </div>
 
     <script>
-        // Word Bank with Synonyms
+        // Synonym Bank (internal word bank)
         const wordBank = {
             "affect": ["influence", "impact", "alter", "change", "modify"],
             "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
@@ -70,15 +111,12 @@
             "distance": ["length", "range", "interval", "gap", "space"]
         };
 
-        // Function to get synonyms
+        // Synonym Finder Function
         function getSynonyms() {
-            const inputWord = document.getElementById("wordInput").value.trim().toLowerCase(); // Normalize to lowercase and trim spaces
+            const inputWord = document.getElementById("wordInput").value.trim().toLowerCase();
             const resultDiv = document.getElementById("synonymsResult");
 
-            console.log("Searching for synonyms of:", inputWord);  // Debugging step to see the input
-
-            // Check if the input word is in the word bank
-            if (inputWord && wordBank.hasOwnProperty(inputWord)) {
+            if (inputWord && wordBank[inputWord]) {
                 const synonyms = wordBank[inputWord];
                 resultDiv.innerHTML = `<strong>Synonyms for "${inputWord}":</strong> ${synonyms.join(", ")}`;
             } else {
@@ -86,38 +124,57 @@
             }
         }
 
-        // Function to check grammar (using a hypothetical Grammar API)
+        // Grammar Checker Function (basic checks)
         function checkGrammar() {
             const text = document.getElementById("grammarInput").value.trim();
             const resultDiv = document.getElementById("grammarResult");
-            
+
             if (!text) {
-                resultDiv.innerHTML = "Please enter some text to check grammar.";
+                resultDiv.innerHTML = "Please enter some text to check.";
                 return;
             }
 
-            // Here we assume a Grammar API (like GrammarBot or similar)
-            // For simplicity, we'll simulate a response:
-            resultDiv.innerHTML = `Grammar check result: (Simulated) No errors found in your text.`;
+            const mistakes = [];
+            if (text.includes(" its ") && !text.includes("it's ")) {
+                mistakes.push("Did you mean 'it's' instead of 'its'?");
+            }
+            if (text.includes(" theyre ") && !text.includes("they're ")) {
+                mistakes.push("Did you mean 'they're' instead of 'theyre'?");
+            }
 
-            // You can replace this with an actual API call if needed.
+            if (mistakes.length > 0) {
+                resultDiv.innerHTML = "<strong>Grammar Issues:</strong><ul>";
+                mistakes.forEach(issue => {
+                    resultDiv.innerHTML += `<li>${issue}</li>`;
+                });
+                resultDiv.innerHTML += "</ul>";
+            } else {
+                resultDiv.innerHTML = "No grammar issues found!";
+            }
         }
 
-        // Function to find word definitions using a hypothetical dictionary API
-        function findDictionary() {
-            const inputWord = document.getElementById("dictionaryInput").value.trim().toLowerCase();
+        // Dictionary & Thesaurus function (Link to external dictionary)
+        function getDictionaryInfo() {
+            const word = document.getElementById("dictionaryInput").value.trim().toLowerCase();
             const resultDiv = document.getElementById("dictionaryResult");
 
-            if (!inputWord) {
-                resultDiv.innerHTML = "Please enter a word to search its definition.";
+            if (!word) {
+                resultDiv.innerHTML = "Please enter a word.";
                 return;
             }
 
-            // Here we assume using a Dictionary API (like Wordnik, Merriam-Webster, etc.)
-            // For simplicity, we'll simulate a response:
-            resultDiv.innerHTML = `Definition for "${inputWord}": (Simulated) Meaning of the word "${inputWord}" will go here.`;
+            if (wordBank[word]) {
+                resultDiv.innerHTML = `<strong>Synonyms for "${word}":</strong><ul>`;
+                wordBank[word].forEach(synonym => {
+                    resultDiv.innerHTML += `<li>${synonym}</li>`;
+                });
+                resultDiv.innerHTML += "</ul>";
+            } else {
+                resultDiv.innerHTML = `No synonyms found for "${word}".`;
+            }
 
-            // You can replace this with an actual API call if needed.
+            // External Dictionary/Thesaurus Link (Wordnik or any other site)
+            resultDiv.innerHTML += `<br><a href="https://www.wordnik.com/words/${word}" target="_blank">More details on Wordnik</a>`;
         }
     </script>
 </body>
