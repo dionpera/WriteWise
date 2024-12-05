@@ -71,25 +71,36 @@
       let issuesFound = false;
       let issueMessages = [];
 
-      // Step 1: Check capitalization of the first letter of the sentence
-      let trimmedText = inputText.trim();
-      let firstLetter = trimmedText.charAt(0);
-      
-      if (firstLetter && firstLetter === firstLetter.toLowerCase()) {
-        issuesFound = true;
-        issueMessages.push("Issue: The first letter of the sentence should be capitalized.");
-        resultText = resultText.replace(firstLetter, firstLetter.toUpperCase());
-      }
+      // Step 1: Capitalization check - Ensure the first word of the sentence starts with a capital letter
+      let sentences = inputText.split(/([.!?])/);  // Split the text into sentences based on punctuation
+      sentences = sentences.filter(Boolean);  // Remove empty items
 
-      // Step 2: Check for missing punctuation at the end of the sentence
-      let endPunctuationPattern = /[.!?]$/;
-      if (!endPunctuationPattern.test(trimmedText)) {
-        issuesFound = true;
-        issueMessages.push("Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark.");
-        resultText += " <span class='highlight'>Suggestion: Please add appropriate punctuation.</span>";
-      }
+      // Check if the first letter of each sentence is capitalized
+      sentences.forEach((sentence, index) => {
+        let trimmedSentence = sentence.trim();
+        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
+          issuesFound = true;
+          issueMessages.push(`Issue: The first letter of the sentence should be capitalized. Sentence: "${trimmedSentence}"`);
+          // Capitalize the first letter
+          sentences[index] = trimmedSentence.charAt(0).toUpperCase() + trimmedSentence.slice(1);
+        }
+      });
 
-      // Step 3: Check for capitalization of proper nouns
+      // Rejoin sentences after fixing capitalization
+      resultText = sentences.join(' ');
+
+      // Step 2: Check for punctuation at the end of each sentence
+      let punctuationPattern = /[.!?]$/;
+      sentences.forEach((sentence, index) => {
+        if (!punctuationPattern.test(sentence.trim())) {
+          issuesFound = true;
+          issueMessages.push(`Issue: Missing punctuation at the end of the sentence. Please add a period, question mark, or exclamation mark. Sentence: "${sentence.trim()}"`);
+          // Add a period if missing
+          sentences[index] = sentence.trim() + '.';
+        }
+      });
+
+      // Step 3: Check for proper noun capitalization
       wordBank.properNouns.forEach(noun => {
         let regex = new RegExp(`\\b${noun.toLowerCase()}\\b`, 'g');
         resultText = resultText.replace(regex, (match) => {
@@ -97,8 +108,8 @@
         });
       });
 
-      // Step 4: Check for spelling mistakes from the commonMistakes bank
-      let words = trimmedText.split(' ');
+      // Step 4: Spelling check
+      let words = resultText.split(' ');
       let correctedText = words.map(word => {
         if (wordBank.commonMistakes[word.toLowerCase()]) {
           return `<span class='highlight'>${word} (Did you mean "${wordBank.commonMistakes[word.toLowerCase()]}?")</span>`;
