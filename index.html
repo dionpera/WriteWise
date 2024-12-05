@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WriteWise - Grammar & Thesaurus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #16a085; /* Green color */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            resize: none;
+        }
+        button {
+            background-color: #16a085;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #1abc9c;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .issue {
+            padding: 12px;
+            background-color: #ecf9f5;
+            border-left: 5px solid #16a085;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            width: calc(100% - 100px);
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            width: calc(100% - 120px);
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .highlight {
+            background-color: #ffff99; /* Yellow background for highlighting */
+            border-bottom: 3px solid red; /* Red underline to indicate error */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>WriteWise - Grammar & Thesaurus</h1>
+</header>
+
+<div class="container">
+    <!-- Grammar Checking Section -->
+    <div class="section">
+        <h2>Grammar Checker</h2>
+        <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+        <button onclick="checkGrammar()">Check Grammar</button>
+        <div id="grammarResults" class="results"></div>
+    </div>
+
+    <!-- Thesaurus & Dictionary Lookup Section -->
+    <div class="section">
+        <h2>Thesaurus and Dictionary Search</h2>
+        <input type="text" id="wordInput" placeholder="Enter word for thesaurus or dictionary lookup" />
+        <button onclick="searchThesaurus()">Search</button>
+        <div id="thesaurusResults" class="results"></div>
+    </div>
+
+    <!-- Essay Linking Words Dictionary Section -->
+    <div class="section">
+        <h2>Essay Linking Words Dictionary</h2>
+        <p>Select the type of linking word you are looking for:</p>
+        <select id="linkingWordCategory" onchange="showLinkingWords()">
+            <option value="">Select Category</option>
+            <option value="result">Giving a Result</option>
+            <option value="addition">Adding Information</option>
+            <option value="summary">Summarizing</option>
+            <option value="example">Giving Examples</option>
+            <option value="emphasis">Emphasizing a Point</option>
+            <option value="sequence">Sequencing Ideas</option>
+        </select>
+        <button onclick="showLinkingWords()">Show Words</button>
+        <div id="linkingWordsResults" class="results"></div>
+    </div>
+</div>
+
+<script>
+    // Grammar Checker - Enhanced with punctuation checks and highlighted issues
+    async function checkGrammar() {
+        const text = document.getElementById('textInput').value;
+        const resultsDiv = document.getElementById('grammarResults');
+        const sentences = text.split(/(?<=\.|\?|\!)/); // Split by sentence-ending punctuation
+        resultsDiv.innerHTML = ''; // Clear previous results
+        
+        let highlightedText = text; // Start with original text
+
+        // Check for punctuation and commas
+        sentences.forEach((sentence, index) => {
+            const trimmedSentence = sentence.trim();
+            if (trimmedSentence) {
+                const punctuationMissing = checkPunctuation(trimmedSentence);
+                if (punctuationMissing) {
+                    // Highlight the sentence with missing punctuation
+                    highlightedText = highlightedText.replace(trimmedSentence, `<span class="highlight">${trimmedSentence}</span>`);
+                    const issue = document.createElement('div');
+                    issue.classList.add('issue');
+                    issue.innerHTML = `
+                        <strong>Issue:</strong> Missing punctuation at the end of this sentence. <br>
+                        <strong>Sentence:</strong> "${trimmedSentence}"<br>
+                        <strong>Suggestion:</strong> Please add appropriate punctuation (full stop, question mark, or exclamation mark).<br><br>
+                    `;
+                    resultsDiv.appendChild(issue);
+                }
+
+                // Check for comma issues (e.g., missing after introductory phrases)
+                const commaIssue = checkCommaUsage(trimmedSentence);
+                if (commaIssue) {
+                    // Highlight the sentence with possible comma misuse
+                    highlightedText = highlightedText.replace(trimmedSentence, `<span class="highlight">${trimmedSentence}</span>`);
+                    const issue = document.createElement('div');
+                    issue.classList.add('issue');
+                    issue.innerHTML = `
+                        <strong>Issue:</strong> Potential comma issue in this sentence. <br>
+                        <strong>Sentence:</strong> "${trimmedSentence}"<br>
+                        <strong>Suggestion:</strong> Please check your comma usage in this sentence.<br><br>
+                    `;
+                    resultsDiv.appendChild(issue);
+                }
+            }
+        });
+
+        // Check for complex sentences and correct punctuation for question words
+        const complexCheck = checkComplexSentence(text);
+        if (complexCheck) {
+            const issue = document.createElement('div');
+            issue.classList.add('issue');
+            issue.innerHTML = `
+                <strong>Issue:</strong> Potential punctuation error in complex sentence structure. <br>
+                <strong>Suggestion:</strong> Ensure punctuation is correct in complex sentence.<br><br>
+            `;
+            resultsDiv.appendChild(issue);
+        }
+
+        // Update the textarea with highlighted text
+        if (highlightedText !== text) {
+            document.getElementById('textInput').value = highlightedText; // Set the modified text
+        }
+
+        if (!resultsDiv.innerHTML) {
+            resultsDiv.innerHTML = 'No grammar or punctuation issues found!';
+        }
+    }
+
+    // Check if sentence ends with appropriate punctuation
+    function checkPunctuation(sentence) {
+        // Check if sentence ends with '.', '?', or '!'
+        return !/[.?!]$/.test(sentence);
+    }
+
+    // Check for potential missing or misplaced commas
+    function checkCommaUsage(sentence) {
+        // Example rule: Add a comma after introductory phrases (if no comma exists)
+        const introPattern = /^(Although|While|After|If|Because)\s+[A-Za-z]/;
+        return introPattern.test(sentence) && !/,/.test(sentence);
+    }
+
+    // Check for complex sentence structure
+    function checkComplexSentence(text) {
+        // Match question words at the beginning of a sentence without a question mark
+        const questionWords = ['Why', 'How', 'When', 'What', 'Where', 'Who'];
+        const regex = new RegExp(`^(${questionWords.join('|')})[\\w\\s]+[^?]$`, 'i');
+        return regex.test(text);
+    }
+
+    // Thesaurus/Dictionary Lookup
+    function searchThesaurus() {
+        const word = document.getElementById('wordInput').value;
+        const resultsDiv = document.getElementById('thesaurusResults');
+        const dictionary = {
+            "example": ["instance", "case", "sample", "exemplar"],
+            "happy": ["content", "joyful", "cheerful", "delighted"],
+            "big": ["large", "huge", "massive", "gigantic"],
+            "fast": ["quick", "rapid", "speedy", "swift"]
+        };
+
+        if (dictionary[word.toLowerCase()]) {
+            const synonyms = dictionary[word.toLowerCase()];
+            resultsDiv.innerHTML = `
+                <strong>Synonyms for "${word}":</strong> ${synonyms.join(', ')}<br><br>
+            `;
+        } else {
+            resultsDiv.innerHTML = `No synonyms found for "${word}".`;
+        }
+    }
+
+    // Essay Linking Words Dictionary
+    function showLinkingWords() {
+        const category = document.getElementById('linkingWordCategory').value;
+        const resultsDiv = document.getElementById('linkingWordsResults');
+        const linkingWords = {
+            result: {
+                words: ["Therefore", "Consequently", "Thus", "As a result"],
+                example: "She studied hard for the exam. Therefore, she passed with excellent marks.",
+                description: "These words show the outcome of an action or situation, highlighting cause-and-effect relationships."
+            },
+            addition: {
+                words: ["Furthermore", "Moreover", "In addition", "Also"],
+                example: "The project requires a lot of research. Furthermore, it demands creativity and time management.",
+                description: "These words are used to introduce additional points or details, expanding on the initial idea."
+            },
+            summary: {
+                words: ["In conclusion", "To summarize", "In short", "To sum up"],
+                example: "To summarize, the data suggests that online learning is effective but requires proper time management.",
+                description: "These help to briefly restate the main points or provide a concise ending to the discussion."
+            },
+            example: {
+                words: ["For example", "Such as", "Including"],
+                example: "Many factors contribute to climate change, for example, deforestation and pollution.",
+                description: "These words are used to introduce specific examples that clarify or support a statement."
+            },
+            emphasis: {
+                words: ["Indeed", "Particularly", "Undoubtedly", "Especially"],
+                example: "Indeed, her research has significantly advanced our understanding of the topic.",
+                description: "These highlight important ideas and reinforce the significance of a point."
+            },
+            sequence: {
+                words: ["First", "Second", "Finally", "Subsequently"],
+                example: "First, we need to review the data. Second, we will analyze the trends, and finally, we will make recommendations.",
+                description: "These words help organize information in a logical order, guiding the reader through the essay step by step."
+            }
+        };
+
+        let output = '';
+        if (linkingWords[category]) {
+            const categoryData = linkingWords[category];
+            output += `
+                <div class="issue">
+                    <strong>Category: ${category.charAt(0).toUpperCase() + category.slice(1)}</strong><br>
+                    <strong>Words:</strong> ${categoryData.words.join(', ')}<br>
+                    <strong>Example:</strong> ${categoryData.example}<br>
+                    <strong>Description:</strong> ${categoryData.description}<br><br>
+                </div>
+            `;
+        } else {
+            output = "Please select a category to see the linking words.";
+        }
+
+        resultsDiv.innerHTML = output;
+    }
+</script>
+
+</body>
+</html>
