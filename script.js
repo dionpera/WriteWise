@@ -685,3 +685,6 @@ async function checkGrammar() {
         resultsDiv.innerHTML = 'No grammar or spelling issues found!';
     }
 }
+"word": ["synonym1", "synonym2", "synonym3"]
+"good": ["great", "decent", "excellent", "fine"],
+"bad": ["awful", "poor", "subpar"]
