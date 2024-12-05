@@ -368,3 +368,106 @@ async function searchThesaurus() {
         dictionaryDiv.innerHTML = 'No dictionary results found.';
     }
 }
+// Grammar Checker - Highlighting Text with Errors
+async function checkGrammar() {
+    const text = document.getElementById('textInput').value;
+    const resultsDiv = document.getElementById('grammarResults');
+    const textArea = document.getElementById('textInput');
+
+    // Send request to LanguageTool API for grammar checking
+    const response = await fetch('https://api.languagetool.org/v2/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `text=${encodeURIComponent(text)}&language=en-US`,
+    });
+
+    const data = await response.json();
+    resultsDiv.innerHTML = ''; // Clear previous results
+    let highlightedText = text; // Start with the original text
+
+    if (data.matches && data.matches.length > 0) {
+        // Iterate over grammar issues and highlight them
+        data.matches.forEach(match => {
+            const start = match.offset;
+            const end = start + match.length;
+            const errorText = match.message;
+            const replacement = match.replacements.length > 0 ? match.replacements[0].value : 'No suggestion';
+
+            // Highlight the issue in the text
+            highlightedText = highlightedText.substring(0, start) + 
+                `<span class="highlight" title="${errorText}">${highlightedText.substring(start, end)}</span>` + 
+                highlightedText.substring(end);
+        });
+
+        // Display highlighted text
+        textArea.innerHTML = highlightedText; // Update textarea with highlighted text
+        resultsDiv.innerHTML = 'Grammar issues highlighted in the text above.';
+    } else {
+        resultsDiv.innerHTML = 'No grammar or spelling issues found!';
+    }
+}
+
+// Thesaurus and Dictionary Search
+async function searchThesaurus() {
+    const word = document.getElementById('wordInput').value;
+    const resultsDiv = document.getElementById('thesaurusResults');
+    
+    if (!word) {
+        resultsDiv.innerHTML = "Please enter a word.";
+        return;
+    }
+
+    // Fetch the word data from the dictionary API
+    const thesaurusResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const thesaurusData = await thesaurusResponse.json();
+
+    if (thesaurusData && thesaurusData[0] && thesaurusData[0].meanings) {
+        const meanings = thesaurusData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+
+        resultsDiv.innerHTML = meanings;
+    } else {
+        resultsDiv.innerHTML = 'No results found for that word.';
+    }
+}
+
+// Grammar Checker Highlights Text with Yellow Border
+function applyHighlighting() {
+    const text = document.getElementById('textInput').value;
+    let highlightedText = text;
+
+    // Find and highlight punctuation errors
+    const punctuationRegex = /([.!?])\s*/g;
+    highlightedText = highlightedText.replace(punctuationRegex, (match) => {
+        return `<span class="highlight-punctuation">${match}</span>`;
+    });
+
+    // Replace text area content with highlighted text
+    document.getElementById('textInput').innerHTML = highlightedText;
+}
+
+// Add styles for highlighting
+const style = document.createElement('style');
+style.innerHTML = `
+    .highlight {
+        background-color: yellow;
+        color: black;
+        border-radius: 4px;
+        padding: 0 4px;
+    }
+    .highlight-punctuation {
+        background-color: #ffeb3b;
+        color: #000;
+        border-radius: 2px;
+        padding: 0 2px;
+    }
+`;
+document.head.appendChild(style);
+
+// Event listeners
+document.getElementById('textInput').addEventListener('input', applyHighlighting);
