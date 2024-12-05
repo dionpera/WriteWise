@@ -824,3 +824,53 @@ document.getElementById("findSynonymBtn").addEventListener("click", function() {
       console.error("Error fetching synonyms:", error);
     });
 });
+// Extended Word Bank with Synonyms
+const wordBank = {
+  "affect": ["influence", "impact", "alter", "change", "modify"],
+  "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
+  "appreciate": ["value", "admire", "respect", "cherish", "recognize"],
+  "brilliant": ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
+  "benevolent": ["kind", "charitable", "compassionate", "generous", "altruistic"],
+  "blatant": ["obvious", "flagrant", "conspicuous", "glaring", "evident"],
+  "clever": ["smart", "intelligent", "bright", "witty", "sharp"],
+  "complicated": ["complex", "intricate", "involved", "convoluted", "tangled"],
+  "contemplate": ["ponder", "consider", "reflect", "think", "meditate"],
+  "diligent": ["hardworking", "industrious", "meticulous", "careful", "thorough"],
+  "devious": ["cunning", "sly", "tricky", "dishonest", "deceptive"],
+  "dramatic": ["theatrical", "intense", "expressive", "striking", "emotional"],
+  "eloquent": ["expressive", "articulate", "fluent", "persuasive", "well-spoken"],
+  "endorse": ["support", "approve", "advocate", "recommend", "back"],
+  "elusive": ["evasive", "tricky", "hard-to-find", "fleeting", "ambiguous"],
+  "famous": ["well-known", "renowned", "celebrated", "prominent", "distinguished"],
+  "fragile": ["delicate", "brittle", "frail", "vulnerable", "breakable"],
+  "flourish": ["thrive", "prosper", "blossom", "succeed", "expand"],
+  "generous": ["charitable", "kind", "giving", "benevolent", "magnanimous"],
+  "genuine": ["authentic", "real", "sincere", "honest", "true"],
+  "gratitude": ["thankfulness", "appreciation", "recognition", "gratefulness"],
+  "honest": ["truthful", "sincere", "straightforward", "candid", "open"],
+  "harmonious": ["peaceful", "balanced", "synchronized", "coordinated", "serene"],
+  "hasty": ["rushed", "hurried", "quick", "impulsive", "swift"],
+  "intelligent": ["smart", "bright", "sharp", "clever", "insightful"],
+  "impressive": ["remarkable", "striking", "stunning", "noteworthy", "extraordinary"],
+  "incredible": ["unbelievable", "astonishing", "amazing", "remarkable", "phenomenal"],
+  "joyful": ["happy", "cheerful", "delighted", "blissful", "content"],
+  "peaceful": ["calm", "serene", "tranquil", "gentle", "harmonious"],
+  "debris": ["wreckage", "rubble", "remains", "shards", "fragments"],
+  "time": ["period", "moment", "duration", "epoch", "era"],
+  "distance": ["length", "range", "interval", "gap", "space"]
+};
+
+// Fetch Synonyms Function
+function getSynonyms() {
+  const inputWord = document.getElementById("wordInput").value.trim().toLowerCase(); // Normalize to lowercase and trim spaces
+  const resultDiv = document.getElementById("synonymsResult");
+
+  console.log("Searching for synonyms of:", inputWord);  // Debugging step to see the input
+
+  if (inputWord && wordBank.hasOwnProperty(inputWord)) {
+    const synonyms = wordBank[inputWord];
+    resultDiv.innerHTML = `<strong>Synonyms for "${inputWord}":</strong> ${synonyms.join(", ")}`;
+  } else {
+    resultDiv.innerHTML = `No synonyms found for "${inputWord}".`;
+  }
+}
