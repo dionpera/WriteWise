@@ -1,198 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Essay Linking Words Dictionary & Grammar Checker</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .word-container { margin-bottom: 20px; }
-    .word { font-weight: bold; color: #333; }
-    .definition { margin-left: 20px; }
-    .examples { margin-left: 20px; font-style: italic; color: #555; }
-    .highlight { background-color: yellow; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Bank with Synonyms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+        .container {
+            padding: 20px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .synonyms {
+            margin-top: 20px;
+        }
+        .synonym-item {
+            padding: 5px;
+            background-color: #e0f7e0;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .definition {
+            font-weight: bold;
+        }
+        .synonyms h3 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
-  <h1>Linking Words Dictionary & Grammar Checker</h1>
-  
-  <!-- Grammar Checker Section -->
-  <h2>Grammar Checker</h2>
-  <div>
-    <textarea id="inputText" rows="6" cols="50" placeholder="Enter text to check grammar..."></textarea>
-    <br>
-    <button onclick="checkGrammar()">Check Grammar</button>
-  </div>
-  
-  <h3>Grammar Issues:</h3>
-  <div id="grammarIssues"></div>
-  
-  <h3>Spelling Suggestions:</h3>
-  <div id="spellingSuggestions"></div>
-  
-  <!-- Linking Words Dictionary Section -->
-  <h2>Linking Words Dictionary</h2>
-  <div class="word-container">
-    <p class="word">Moreover</p>
-    <p class="definition">Used to add further information or to emphasise a point.</p>
-    <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
-  </div>
-  <div class="word-container">
-    <p class="word">Therefore</p>
-    <p class="definition">Indicates a result or consequence.</p>
-    <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
-  </div>
 
-  <!-- Thesaurus Section -->
-  <h2>Thesaurus</h2>
-  <div>
-    <input type="text" id="wordInput" placeholder="Enter a word for synonyms...">
-    <button onclick="getSynonyms()">Get Synonyms</button>
-  </div>
-  
-  <h3>Synonyms:</h3>
-  <div id="synonymsResult"></div>
+<header>
+    <h1>Word Bank with Synonyms</h1>
+    <p>Search for a word to find its synonyms and definition</p>
+</header>
 
-  <script>
-    // Function to check grammar
-    function checkGrammar() {
-      let text = document.getElementById('inputText').value;
-      let grammarIssues = [];
-      let spellingSuggestions = [];
-      
-      // Check for missing capital letter at the beginning of a sentence
-      let sentences = text.split(/(?<=[.!?])\s+/); // Split text into sentences using punctuation
-      sentences.forEach((sentence, index) => {
-        let trimmedSentence = sentence.trim();
+<div class="container">
+    <div class="search-container">
+        <input type="text" id="wordInput" placeholder="Enter a word..." />
+        <button onclick="searchWord()">Search</button>
+    </div>
+
+    <div id="results" class="result">
+        <p id="noResults">Please enter a word to search for synonyms and definitions.</p>
+    </div>
+</div>
+
+<script>
+// A to Z word bank with definitions and synonyms
+const wordBank = {
+    "affect": {
+        definition: "to influence something or someone.",
+        synonyms: ["influence", "impact", "alter", "change", "modify"]
+    },
+    "ambiguous": {
+        definition: "having more than one meaning or interpretation.",
+        synonyms: ["unclear", "vague", "indistinct", "uncertain", "obscure"]
+    },
+    "appreciate": {
+        definition: "to recognize the value of something or someone.",
+        synonyms: ["value", "admire", "respect", "cherish", "recognize"]
+    },
+    "brilliant": {
+        definition: "exceptionally clever or talented.",
+        synonyms: ["intelligent", "bright", "outstanding", "exceptional", "dazzling"]
+    },
+    "benevolent": {
+        definition: "well-meaning and kindly.",
+        synonyms: ["kind", "charitable", "compassionate", "generous", "altruistic"]
+    },
+    "blatant": {
+        definition: "done openly and unashamedly.",
+        synonyms: ["obvious", "flagrant", "conspicuous", "glaring", "evident"]
+    },
+    // Add the rest of your words here...
+    "zany": {
+        definition: "absurdly or extravagantly funny.",
+        synonyms: ["crazy", "absurd", "whimsical", "funny", "eccentric"]
+    }
+};
+
+function searchWord() {
+    const word = document.getElementById("wordInput").value.toLowerCase();
+    const resultsDiv = document.getElementById("results");
+    const noResults = document.getElementById("noResults");
+
+    // Clear previous results
+    resultsDiv.innerHTML = '';
+    noResults.style.display = 'none';
+
+    if (wordBank[word]) {
+        // If the word exists in the word bank
+        const wordData = wordBank[word];
+        const synonymsList = wordData.synonyms.map(synonym => `<div class="synonym-item">${synonym}</div>`).join('');
         
-        // Check if the first letter is capitalised
-        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
-          grammarIssues.push({
-            issue: "The first letter of the sentence should be capitalised.",
-            sentence: `"${trimmedSentence}"`
-          });
-        }
-
-        // Check if there's missing punctuation at the end of the sentence
-        if (!/[.!?]$/.test(trimmedSentence)) {
-          grammarIssues.push({
-            issue: "Missing punctuation at the end of the sentence. Please add a full stop, question mark, or exclamation mark.",
-            sentence: `"${trimmedSentence}"`
-          });
-        }
-      });
-
-      // Check for common British spelling mistakes
-      const commonMisspellings = {
-        "color": "colour",
-        "realize": "realise",
-        "organize": "organise",
-        "center": "centre",
-        "theater": "theatre",
-        "defense": "defence",
-        "travelling": "travelling", // "Traveling" in American, "Travelling" in British English
-        "favourite": "favourite",
-        "honor": "honour",
-        "organised": "organised" // Adjusted as per British English
-      };
-
-      // Check for misspellings (you can expand this dictionary)
-      Object.keys(commonMisspellings).forEach((correctSpelling) => {
-        let regex = new RegExp("\\b" + correctSpelling + "\\b", "gi");
-        if (text.match(regex)) {
-          let misspelledWord = text.match(regex)[0];
-          spellingSuggestions.push({
-            incorrect: misspelledWord,
-            suggestion: commonMisspellings[correctSpelling]
-          });
-        }
-      });
-
-      // Display the grammar issues
-      let grammarDiv = document.getElementById('grammarIssues');
-      grammarDiv.innerHTML = "";
-      grammarIssues.forEach(issue => {
-        grammarDiv.innerHTML += `<p>Issue: ${issue.issue} Sentence: ${issue.sentence}</p>`;
-      });
-
-      // Display the spelling suggestions
-      let spellingDiv = document.getElementById('spellingSuggestions');
-      spellingDiv.innerHTML = "";
-      spellingSuggestions.forEach(suggestion => {
-        spellingDiv.innerHTML += `<p>Spelling Suggestion: ${suggestion.incorrect} (Did you mean "${suggestion.suggestion}"?)</p>`;
-      });
-      
-      // Highlight the text
-      highlightText(text, grammarIssues);
+        resultsDiv.innerHTML = `
+            <div>
+                <h2>Word: ${word.charAt(0).toUpperCase() + word.slice(1)}</h2>
+                <div class="definition">
+                    <p><strong>Definition:</strong> ${wordData.definition}</p>
+                </div>
+                <div class="synonyms">
+                    <h3>Synonyms:</h3>
+                    ${synonymsList}
+                </div>
+            </div>
+        `;
+    } else {
+        // If no synonyms are found
+        noResults.style.display = 'block';
+        noResults.textContent = `No synonyms found for "${word}". Try another word.`;
     }
+}
+</script>
 
-    // Function to highlight text
-    function highlightText(text, grammarIssues) {
-      let highlightedText = text;
-
-      // Highlight grammar issues
-      grammarIssues.forEach(issue => {
-        highlightedText = highlightedText.replace(issue.sentence, `<span class="highlight">${issue.sentence}</span>`);
-      });
-
-      // Replace the content with highlighted text
-      document.getElementById('inputText').value = highlightedText;
-    }
-
-    // Function to get synonyms and related words from multiple APIs
-    function getSynonyms() {
-      let word = document.getElementById("wordInput").value.trim();
-
-      // Datamuse API for synonyms
-      let datamuseUrl = `https://api.datamuse.com/words?rel_syn=${word}&rel_trg=${word}&max=5`;
-      
-      fetch(datamuseUrl)
-        .then(response => response.json())
-        .then(data => {
-          if (data.length > 0) {
-            displaySynonyms(data); // If Datamuse returns results, display them
-          } else {
-            // Fallback to Wordnik API if no synonyms from Datamuse
-            let wordnikUrl = `https://api.wordnik.com/v4/word.json/${word}/relatedWords?useCanonical=true&relationshipTypes=synonym&limitPerRelationshipType=5&apiKey=YOUR_API_KEY`;
-            fetch(wordnikUrl)
-              .then(response => response.json())
-              .then(data => {
-                if (data.length > 0) {
-                  displaySynonyms(data); // Display Wordnik results
-                } else {
-                  // Fallback to RhymeBrain API if no synonyms from Wordnik
-                  let rhymeBrainUrl = `https://www.rhymebrain.com/api?rel_syn=${word}&max=5`;
-                  fetch(rhymeBrainUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                      if (data.length > 0) {
-                        displaySynonyms(data); // Display related words or rhymes from RhymeBrain
-                      } else {
-                        displayNoResults(); // No results found from any APIs
-                      }
-                    });
-                }
-              });
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching synonyms:", error);
-          displayNoResults(); // If API call fails
-        });
-    }
-
-    // Function to display synonyms
-    function displaySynonyms(data) {
-      let resultDiv = document.getElementById("synonymsResult");
-      let synonymsList = data.map(entry => entry.word).join(", ");
-      resultDiv.innerHTML = `<p>Synonyms for "<strong>${document.getElementById("wordInput").value}</strong>": ${synonymsList}</p>`;
-    }
-
-    // Function to handle no results case
-    function displayNoResults() {
-      let resultDiv = document.getElementById("synonymsResult");
-      resultDiv.innerHTML = `<p>No synonyms or related words found for "<strong>${document.getElementById("wordInput").value}</strong>".</p>`;
-    }
-  </script>
 </body>
 </html>
