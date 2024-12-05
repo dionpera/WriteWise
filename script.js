@@ -522,3 +522,75 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
+async function searchThesaurus() {
+    const word = document.getElementById('wordInput').value;
+    const resultsDiv = document.getElementById('thesaurusResults');
+    
+    if (!word) {
+        resultsDiv.innerHTML = "Please enter a word.";
+        return;
+    }
+
+    // Fetch the word data from the dictionary API
+    const thesaurusResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const thesaurusData = await thesaurusResponse.json();
+
+    if (thesaurusData && thesaurusData[0] && thesaurusData[0].meanings) {
+        const meanings = thesaurusData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+
+        resultsDiv.innerHTML = meanings;
+    } else {
+        resultsDiv.innerHTML = 'No results found for that word.';
+    }
+}
+async function searchThesaurus() {
+    const word = document.getElementById('wordInput').value;
+    const resultsDiv = document.getElementById('thesaurusResults');
+    
+    if (!word) {
+        resultsDiv.innerHTML = "Please enter a word.";
+        return;
+    }
+
+    // Fetch the word data from the dictionary API for definitions
+    const dictionaryResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const dictionaryData = await dictionaryResponse.json();
+
+    // Check if dictionary data exists
+    if (dictionaryData && dictionaryData[0] && dictionaryData[0].meanings) {
+        let meanings = dictionaryData[0].meanings.map(meaning => {
+            return `
+                <strong>Part of Speech:</strong> ${meaning.partOfSpeech} <br>
+                <strong>Definitions:</strong><br>
+                ${meaning.definitions.map(def => `<li>${def.definition}</li>`).join('')}
+            `;
+        }).join('<hr>');
+        resultsDiv.innerHTML = "<strong>Definitions:</strong><br>" + meanings;
+    } else {
+        resultsDiv.innerHTML = 'No dictionary results found for that word.';
+    }
+
+    // Fetch synonyms from the WordsAPI (for thesaurus)
+    try {
+        const thesaurusResponse = await fetch(`https://wordsapi.com/docs/#synonym/${word}`, {
+            headers: { "Authorization": "Bearer YOUR_API_KEY" } // Replace with your API key
+        });
+        const thesaurusData = await thesaurusResponse.json();
+        
+        if (thesaurusData && thesaurusData.synonyms && thesaurusData.synonyms.length > 0) {
+            const synonyms = thesaurusData.synonyms.map(synonym => `<li>${synonym}</li>`).join('');
+            resultsDiv.innerHTML += `<br><strong>Synonyms:</strong><br><ul>${synonyms}</ul>`;
+        } else {
+            resultsDiv.innerHTML += `<br>No synonyms found for that word.`;
+        }
+    } catch (error) {
+        console.error("Error fetching synonyms:", error);
+        resultsDiv.innerHTML += "<br>Couldn't fetch synonyms.";
+    }
+}
