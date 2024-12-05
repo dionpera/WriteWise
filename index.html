@@ -8,10 +8,6 @@
     body { font-family: Arial, sans-serif; }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; }
     h1, h2 { text-align: center; color: #333; }
-    .word-container { margin-bottom: 20px; }
-    .word { font-weight: bold; color: #333; }
-    .definition { margin-left: 20px; }
-    .examples { margin-left: 20px; font-style: italic; color: #555; }
     .highlight { background-color: yellow; font-weight: bold; }
     #grammar-result { color: red; margin-top: 20px; }
     textarea { width: 100%; height: 150px; margin-bottom: 10px; }
@@ -29,36 +25,18 @@
     <button onclick="checkGrammar()">Check Grammar</button>
     <div id="grammar-result"></div>
 
-    <!-- Link Word Dictionary -->
-    <h2>Linking Words Dictionary</h2>
-    <div class="word-container">
-      <p class="word">Moreover</p>
-      <p class="definition">Used to add further information or to emphasize a point.</p>
-      <p class="examples">Example: "The project requires a lot of research. <span class="word">Moreover</span>, it demands creativity and time management."</p>
-    </div>
-    <div class="word-container">
-      <p class="word">Therefore</p>
-      <p class="definition">Indicates a result or consequence.</p>
-      <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
-    </div>
-
     <!-- Suggestions Output -->
     <div id="suggestions-output" class="output-box"></div>
   </div>
 
   <script>
-    // Word Bank (for example, linking words and basic checks)
-    const wordBank = {
-      linkingWords: ["Moreover", "Therefore", "However", "Because", "Thus", "Meanwhile"],
-      commonMistakes: {
-        "teh": "the",
-        "recieve": "receive",
-        "alot": "a lot",
-        "wich": "which",
-        "definately": "definitely",
-        "occurred": "occurred"
-      },
-      properNouns: ["New York", "John", "Sarah", "London", "Paris"] // List of proper nouns (cities, names, etc.)
+    // Basic Common Mistakes for Spelling Check
+    const commonMistakes = {
+      "teh": "the",
+      "recieve": "receive",
+      "alot": "a lot",
+      "wich": "which",
+      "definately": "definitely"
     };
 
     function checkGrammar() {
@@ -71,7 +49,7 @@
       let issuesFound = false;
       let issueMessages = [];
 
-      // Step 1: Capitalization check - Ensure the first word of the sentence starts with a capital letter
+      // Step 1: Capitalization check - Ensure the first word of each sentence starts with a capital letter
       let sentences = inputText.split(/([.!?])/);  // Split the text into sentences based on punctuation
       sentences = sentences.filter(Boolean);  // Remove empty items
 
@@ -100,19 +78,11 @@
         }
       });
 
-      // Step 3: Check for proper noun capitalization
-      wordBank.properNouns.forEach(noun => {
-        let regex = new RegExp(`\\b${noun.toLowerCase()}\\b`, 'g');
-        resultText = resultText.replace(regex, (match) => {
-          return `<span class='highlight'>${match.charAt(0).toUpperCase() + match.slice(1)}</span>`;
-        });
-      });
-
-      // Step 4: Spelling check
+      // Step 3: Spelling check
       let words = resultText.split(' ');
       let correctedText = words.map(word => {
-        if (wordBank.commonMistakes[word.toLowerCase()]) {
-          return `<span class='highlight'>${word} (Did you mean "${wordBank.commonMistakes[word.toLowerCase()]}?")</span>`;
+        if (commonMistakes[word.toLowerCase()]) {
+          return `<span class='highlight'>${word} (Did you mean "${commonMistakes[word.toLowerCase()]}?")</span>`;
         }
         return word;
       }).join(' ');
