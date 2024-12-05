@@ -732,3 +732,63 @@ document.getElementById("findSynonymBtn").addEventListener("click", function() {
       console.error("Error fetching synonyms:", error);
     });
 });
+// Function to get synonyms and related words from multiple APIs
+function getSynonyms() {
+  let word = document.getElementById("wordInput").value.trim();
+
+  // Datamuse API for synonyms
+  let datamuseUrl = `https://api.datamuse.com/words?rel_syn=${word}&max=5`;
+  console.log("Requesting Datamuse API for:", word);
+  
+  fetch(datamuseUrl)
+    .then(response => response.json())
+    .then(data => {
+      console.log("Datamuse response:", data); // Debug log
+      if (data.length > 0) {
+        displaySynonyms(data); // If Datamuse returns results, display them
+      } else {
+        console.log("Datamuse returned no results, trying Wordnik...");
+        // Fallback to Wordnik API if no synonyms from Datamuse
+        let wordnikUrl = `https://api.wordnik.com/v4/word.json/${word}/relatedWords?useCanonical=true&relationshipTypes=synonym&limitPerRelationshipType=5&apiKey=YOUR_API_KEY`;
+        fetch(wordnikUrl)
+          .then(response => response.json())
+          .then(data => {
+            console.log("Wordnik response:", data); // Debug log
+            if (data.length > 0) {
+              displaySynonyms(data); // Display Wordnik results
+            } else {
+              console.log("Wordnik returned no results, trying RhymeBrain...");
+              // Fallback to RhymeBrain API if no synonyms from Wordnik
+              let rhymeBrainUrl = `https://www.rhymebrain.com/api?rel_syn=${word}&max=5`;
+              fetch(rhymeBrainUrl)
+                .then(response => response.json())
+                .then(data => {
+                  console.log("RhymeBrain response:", data); // Debug log
+                  if (data.length > 0) {
+                    displaySynonyms(data); // Display related words or rhymes from RhymeBrain
+                  } else {
+                    displayNoResults(); // No results found from any APIs
+                  }
+                });
+            }
+          });
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching synonyms:", error);
+      displayNoResults(); // If API call fails
+    });
+}
+
+// Function to display synonyms
+function displaySynonyms(data) {
+  let resultDiv = document.getElementById("synonymsResult");
+  let synonymsList = data.map(entry => entry.word).join(", ");
+  resultDiv.innerHTML = `<p>Synonyms for "<strong>${document.getElementById("wordInput").value}</strong>": ${synonymsList}</p>`;
+}
+
+// Function to handle no results case
+function displayNoResults() {
+  let resultDiv = document.getElementById("synonymsResult");
+  resultDiv.innerHTML = `<p>No synonyms or related words found for "<strong>${document.getElementById("wordInput").value}</strong>".</p>`;
+}
