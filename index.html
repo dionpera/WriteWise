@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Essay Linking Words Dictionary & Grammar Checker</title>
+  <title>Essay Linking Words Dictionary & Thesaurus with Grammar Checker</title>
   <style>
     body { font-family: Arial, sans-serif; }
     .word-container { margin-bottom: 20px; }
@@ -11,10 +11,11 @@
     .definition { margin-left: 20px; }
     .examples { margin-left: 20px; font-style: italic; color: #555; }
     .highlight { background-color: yellow; }
+    .thesaurus-synonyms { margin-left: 20px; font-style: italic; color: #666; }
   </style>
 </head>
 <body>
-  <h1>Linking Words Dictionary & Grammar Checker</h1>
+  <h1>Linking Words Dictionary, Thesaurus & Grammar Checker</h1>
   
   <!-- Grammar Checker Section -->
   <h2>Grammar Checker</h2>
@@ -42,9 +43,21 @@
     <p class="definition">Indicates a result or consequence.</p>
     <p class="examples">Example: "She studied hard for the exam. <span class="word">Therefore</span>, she passed with excellent marks."</p>
   </div>
-  <!-- You can add more words and examples here -->
+  <!-- You can add more linking words here -->
+
+  <!-- Thesaurus Section -->
+  <h2>Thesaurus</h2>
+  <div>
+    <label for="wordInput">Enter a word to find synonyms:</label>
+    <input type="text" id="wordInput" placeholder="e.g., happy">
+    <button onclick="getSynonyms()">Get Synonyms</button>
+  </div>
+
+  <h3>Synonyms:</h3>
+  <div id="synonymResults"></div>
 
   <script>
+    // Function for Grammar Checking (no changes here)
     function checkGrammar() {
       let text = document.getElementById('inputText').value;
       let grammarIssues = [];
@@ -80,13 +93,13 @@
         "center": "centre",
         "theater": "theatre",
         "defense": "defence",
-        "travelling": "travelling", // "Traveling" in American, "Travelling" in British English
+        "travelling": "travelling",
         "favourite": "favourite",
         "honor": "honour",
-        "organised": "organised" // Adjusted as per British English
+        "organised": "organised"
       };
 
-      // Check for misspellings (you can expand this dictionary)
+      // Check for misspellings
       Object.keys(commonMisspellings).forEach((correctSpelling) => {
         let regex = new RegExp("\\b" + correctSpelling + "\\b", "gi");
         if (text.match(regex)) {
@@ -126,6 +139,28 @@
 
       // Replace the content with highlighted text
       document.getElementById('inputText').value = highlightedText;
+    }
+
+    // Function for getting synonyms (Thesaurus functionality)
+    function getSynonyms() {
+      const wordInput = document.getElementById('wordInput').value.trim().toLowerCase();
+      const synonyms = {
+        "happy": ["joyful", "content", "cheerful", "elated", "delighted"],
+        "sad": ["unhappy", "sorrowful", "depressed", "downcast", "melancholy"],
+        "fast": ["quick", "rapid", "speedy", "swift", "hurried"],
+        "strong": ["powerful", "sturdy", "tough", "robust", "muscular"],
+        "beautiful": ["attractive", "pretty", "lovely", "gorgeous", "elegant"],
+        "good": ["excellent", "fine", "superb", "great", "positive"],
+        "big": ["large", "huge", "gigantic", "immense", "vast"]
+      };
+
+      // If synonyms exist for the entered word, display them
+      if (synonyms[wordInput]) {
+        let synonymDiv = document.getElementById('synonymResults');
+        synonymDiv.innerHTML = `<p>Synonyms for <strong>${wordInput}</strong>: ${synonyms[wordInput].join(", ")}</p>`;
+      } else {
+        document.getElementById('synonymResults').innerHTML = `<p>No synonyms found for "${wordInput}".</p>`;
+      }
     }
   </script>
 </body>
