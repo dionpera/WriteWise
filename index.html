@@ -142,7 +142,7 @@
     // Function to get synonyms for a word from the Datamuse API
     function getSynonyms() {
       let word = document.getElementById("wordInput").value.trim();
-      let url = `https://api.datamuse.com/words?rel_syn=${word}&max=5`; // API endpoint for synonyms
+      let url = `https://api.datamuse.com/words?rel_syn=${word}&rel_trg=${word}&rel_ant=${word}&max=5`; // Fetch synonyms, related words, and antonyms
 
       // Fetch synonyms using the Datamuse API
       fetch(url)
@@ -153,7 +153,7 @@
             let synonymsList = data.map(entry => entry.word).join(", ");
             resultDiv.innerHTML = `<p>Synonyms for <strong>${word}</strong>: ${synonymsList}</p>`;
           } else {
-            resultDiv.innerHTML = `<p>No synonyms found for "<strong>${word}</strong>".</p>`;
+            resultDiv.innerHTML = `<p>No synonyms or related words found for "<strong>${word}</strong>".</p>`;
           }
         })
         .catch(error => {
