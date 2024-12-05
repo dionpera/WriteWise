@@ -792,3 +792,35 @@ function displayNoResults() {
   let resultDiv = document.getElementById("synonymsResult");
   resultDiv.innerHTML = `<p>No synonyms or related words found for "<strong>${document.getElementById("wordInput").value}</strong>".</p>`;
 }
+document.getElementById("findSynonymBtn").addEventListener("click", function() {
+  let word = document.getElementById("synonymInput").value.trim();
+  let resultsDiv = document.getElementById("synonymResults");
+
+  if (!word) {
+    resultsDiv.innerHTML = "Please enter a word.";
+    return;
+  }
+
+  // Clear previous results
+  resultsDiv.innerHTML = "Searching for synonyms...";
+
+  fetch(`https://api.datamuse.com/words?rel_syn=${word}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.length > 0) {
+        let synonyms = data.map(item => item.word).join(", ");
+        resultsDiv.innerHTML = `Synonyms for "${word}": ${synonyms}`;
+      } else {
+        resultsDiv.innerHTML = `No synonyms found for "${word}". Please try another word.`;
+      }
+    })
+    .catch(error => {
+      resultsDiv.innerHTML = "An error occurred while fetching synonyms. Please try again later.";
+      console.error("Error fetching synonyms:", error);
+    });
+});
