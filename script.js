@@ -690,3 +690,18 @@ async function checkGrammar() {
 "bad": ["awful", "poor", "subpar"]
 let url = `https://api.datamuse.com/words?rel_syn=${word}&rel_trg=${word}&rel_ant=${word}&max=5`;
 let url = `https://api.datamuse.com/words?rel_syn=${word}&max=5`; // Only fetch synonyms
+let url = `https://api.datamuse.com/words?rel_syn=${word}&rel_trg=${word}&rel_jjb=${word}&max=5`;
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    let resultDiv = document.getElementById("synonymsResult");
+    if (data.length > 0) {
+      let synonymsList = data.map(entry => entry.word).join(", ");
+      resultDiv.innerHTML = `<p>Synonyms for <strong>${word}</strong>: ${synonymsList}</p>`;
+    } else {
+      resultDiv.innerHTML = `<p>No synonyms found for "<strong>${word}</strong>". Try a different word!</p>`;
+    }
+  })
+  .catch(error => {
+    console.error("Error fetching synonyms:", error);
+  });
