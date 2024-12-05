@@ -66,12 +66,20 @@
       let punctuationPattern = /([a-zA-Z0-9]+)(\s)([a-zA-Z0-9]+)(?=[a-zA-Z0-9])/g;
       let resultText = inputText.replace(punctuationPattern, "<span class='highlight'>$1$2$3</span>");
       
-      // Identifying missing punctuation (basic example: end punctuation)
-      if (!/[.!?]$/.test(inputText)) {
+      // Identifying missing punctuation at the end of sentences
+      let endPunctuation = /[.!?]$/;
+      if (!endPunctuation.test(inputText)) {
         grammarResult.innerHTML = "Issue: Missing punctuation at the end of this sentence.";
         resultText += " <span class='highlight'>Suggestion: Please add a full stop, question mark, or exclamation mark.</span>";
       } else {
         grammarResult.innerHTML = "No major punctuation errors identified.";
+      }
+
+      // Identifying missing punctuation at the beginning of sentences (capital letter missing, punctuation needed)
+      let startPunctuationPattern = /^[a-z]/; // Checks if the sentence starts with a lowercase letter
+      if (startPunctuationPattern.test(inputText)) {
+        grammarResult.innerHTML += "<br>Issue: Sentence starts with a lowercase letter. Please ensure the first letter is capitalized.";
+        resultText = resultText.replace(startPunctuationPattern, (match) => `<span class='highlight'>${match.toUpperCase()}</span>`);
       }
 
       // Check for word bank issues (spelling mistakes, common errors)
@@ -86,9 +94,6 @@
       suggestionsOutput.innerHTML = `<p><b>Spelling Suggestions:</b> ${correctedText}</p>`;
       document.getElementById('text-input').value = resultText;
     }
-
-    // Dictionary Thesaurus remains unchanged
-    // (Linking Word Dictionary is already correct, and no changes are needed here)
   </script>
 </body>
 </html>
