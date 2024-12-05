@@ -17,7 +17,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>WriteWise Grammar Checker & Dictionary</h1>
+    <h1>WriteWise Grammar Checker</h1>
 
     <!-- Grammar Checker Section -->
     <h2>Grammar Checker</h2>
@@ -53,10 +53,10 @@
       let sentences = inputText.split(/([.!?])/);  // Split the text into sentences based on punctuation
       sentences = sentences.filter(Boolean);  // Remove empty items
 
-      // Check if the first letter of each sentence is capitalized
       sentences.forEach((sentence, index) => {
         let trimmedSentence = sentence.trim();
-        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
+        // Check if the first letter of the sentence is capitalized
+        if (trimmedSentence && trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
           issuesFound = true;
           issueMessages.push(`Issue: The first letter of the sentence should be capitalized. Sentence: "${trimmedSentence}"`);
           // Capitalize the first letter
