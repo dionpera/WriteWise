@@ -51,13 +51,17 @@
       let spellingSuggestions = [];
       
       // Check for missing capital letter at the beginning of a sentence
-      if (text.charAt(0) !== text.charAt(0).toUpperCase()) {
-        grammarIssues.push({
-          issue: "The first letter of the sentence should be capitalized.",
-          sentence: `"${text.trim()}"`
-        });
-      }
-      
+      let sentences = text.split(/(?<=[.!?])\s+/); // Split text into sentences using punctuation
+      sentences.forEach((sentence, index) => {
+        let trimmedSentence = sentence.trim();
+        if (trimmedSentence.charAt(0) !== trimmedSentence.charAt(0).toUpperCase()) {
+          grammarIssues.push({
+            issue: "The first letter of the sentence should be capitalised.",
+            sentence: `"${trimmedSentence}"`
+          });
+        }
+      });
+
       // Check for missing punctuation at the end of a sentence
       if (!/[.!?]$/.test(text.trim())) {
         grammarIssues.push({
@@ -66,12 +70,14 @@
         });
       }
 
-      // Check for common spelling mistakes (simple example)
+      // Check for common British spelling mistakes
       const commonMisspellings = {
-        "colour": "color",
-        "realise": "realize",
-        "organise": "organize",
-        "centre": "center"
+        "color": "colour",
+        "realize": "realise",
+        "organize": "organise",
+        "center": "centre",
+        "theater": "theatre",
+        "defense": "defence"
       };
 
       // Check for misspellings (you can expand this dictionary)
