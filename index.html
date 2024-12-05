@@ -69,9 +69,12 @@
 
       // Check if sentence starts with a lowercase letter (missing capital letter)
       let startCapitalPattern = /^[a-z]/;
-      if (startCapitalPattern.test(inputText)) {
+      let firstLetter = inputText.trim().charAt(0);
+      
+      // Check if first letter is lowercase (ignores leading spaces)
+      if (startCapitalPattern.test(firstLetter)) {
         grammarResult.innerHTML = "Issue: The first letter should be capitalized.";
-        resultText = resultText.replace(startCapitalPattern, (match) => `<span class='highlight'>${match.toUpperCase()}</span>`);
+        resultText = resultText.replace(firstLetter, firstLetter.toUpperCase());
       }
 
       // Check for punctuation at the end of the sentence
