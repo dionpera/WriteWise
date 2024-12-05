@@ -705,3 +705,30 @@ fetch(url)
   .catch(error => {
     console.error("Error fetching synonyms:", error);
   });
+document.getElementById("findSynonymBtn").addEventListener("click", function() {
+  let word = document.getElementById("synonymInput").value;
+  let resultsDiv = document.getElementById("synonymResults");
+
+  if (!word) {
+    resultsDiv.innerHTML = "Please enter a word.";
+    return;
+  }
+
+  // Fetch synonyms from Datamuse API
+  fetch(`https://api.datamuse.com/words?rel_syn=${word}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.length > 0) {
+        // Display synonyms if available
+        let synonyms = data.map(item => item.word).join(", ");
+        resultsDiv.innerHTML = `Synonyms for "${word}": ${synonyms}`;
+      } else {
+        // Handle case where no synonyms are found
+        resultsDiv.innerHTML = `No synonyms found for "${word}". Please try another word.`;
+      }
+    })
+    .catch(error => {
+      resultsDiv.innerHTML = "An error occurred while fetching synonyms. Please try again later.";
+      console.error("Error fetching synonyms:", error);
+    });
+});
