@@ -28,6 +28,71 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.word-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.word-item {
+    padding: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.word-item:hover {
+    background-color: #e0e0e0;
+}
+
+.result-box {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.grammar-feedback {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+}
 
 button:hover {
     background-color: #2980b9;
