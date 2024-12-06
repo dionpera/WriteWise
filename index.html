@@ -3,148 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synonym Finder and Grammar Checker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .word-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .word-item {
-            padding: 8px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .result-box {
-            margin-top: 20px;
-        }
-        .grammar-feedback {
-            margin-top: 10px;
-            color: green;
-            font-weight: bold;
-        }
-    </style>
+    <title>Interactive Word Tools</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Synonym Finder, Grammar Checker, and Link Word Dictionary</h1>
-    
-    <!-- Synonym Finder Section -->
-    <div class="section">
-        <h2>Synonym Finder</h2>
-        <label for="wordInput">Enter a word:</label>
-        <input type="text" id="wordInput" placeholder="Enter word">
-        <button onclick="findSynonyms()">Find Synonyms</button>
-        <div id="results" class="result-box"></div>
-    </div>
+    <header>
+        <h1>Interactive Word Tools</h1>
+    </header>
 
-    <!-- Word Bank Section -->
-    <div class="section">
-        <h2>Word Bank</h2>
-        <div class="word-list" id="wordList"></div>
-    </div>
+    <main>
+        <!-- Word Bank Section -->
+        <section id="word-bank">
+            <h2>Word Bank</h2>
+            <p>Click on a word to see its synonyms and meaning.</p>
+            <ul id="word-list"></ul>
+        </section>
 
-    <!-- Grammar Checker Section -->
-    <div class="section">
-        <h2>Grammar Checker</h2>
-        <label for="grammarInput">Enter a sentence:</label>
-        <input type="text" id="grammarInput" placeholder="Type a sentence">
-        <button onclick="checkGrammar()">Check Grammar</button>
-        <div id="grammarFeedback" class="grammar-feedback"></div>
-    </div>
+        <!-- Synonym and Dictionary Result Section -->
+        <section id="results">
+            <h2>Results</h2>
+            <div id="synonymsResults">
+                <h3>Synonyms</h3>
+                <p id="synonyms-output">Select a word to see synonyms.</p>
+            </div>
+            <div id="dictionaryResults">
+                <h3>Definition</h3>
+                <p id="definition-output">Select a word to see the definition.</p>
+            </div>
+        </section>
 
-    <!-- Linking Words Dictionary Section -->
-    <div class="section">
-        <h2>Linking Words Dictionary</h2>
-        <div class="result-box">
-            <p><strong>Moreover</strong>: Used to add further information or to emphasize a point.</p>
-            <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
-            <p><strong>Therefore</strong>: Indicates a result or consequence.</p>
-            <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
-            <p><strong>However</strong>: Used to introduce a contrasting idea.</p>
-            <p>Example: "He wanted to join the team. <strong>However</strong>, he missed the tryouts."</p>
-        </div>
-    </div>
+        <!-- Grammar Checker Section -->
+        <section id="grammar-checker">
+            <h2>Grammar Checker</h2>
+            <textarea id="grammar-input" placeholder="Type a sentence to check for grammar."></textarea>
+            <button id="check-grammar" onclick="checkGrammar()">Check Grammar</button>
+            <div id="grammar-output"></div>
+        </section>
 
-    <script>
-        // Word Bank Data
-        const wordBank = {
-            "affect": ["influence", "impact", "alter", "change", "modify"],
-            "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
-            "appreciate": ["value", "admire", "respect", "cherish", "recognize"],
-            "brilliant": ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
-            "benevolent": ["kind", "charitable", "compassionate", "generous", "altruistic"],
-            "time": ["period", "moment", "duration", "epoch", "era"],
-            "distance": ["length", "range", "interval", "gap", "space"]
-        };
+        <!-- Linking Words Dictionary Section -->
+        <section id="linking-words">
+            <h2>Linking Words Dictionary</h2>
+            <div id="linking-words-box">
+                <p><strong>Moreover:</strong> Used to add further information or emphasize a point.</p>
+                <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
+                <p><strong>Therefore:</strong> Indicates a result or consequence.</p>
+                <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
+            </div>
+        </section>
+    </main>
 
-        // Initialize Word List on Page Load
-        document.addEventListener('DOMContentLoaded', () => {
-            const wordListElement = document.getElementById('wordList');
-            for (let word in wordBank) {
-                const wordItem = document.createElement('div');
-                wordItem.className = 'word-item';
-                wordItem.textContent = word;
-                wordItem.onclick = () => displaySynonyms(word);
-                wordListElement.appendChild(wordItem);
-            }
-        });
+    <footer>
+        <p>Interactive Word Tools © 2024</p>
+    </footer>
 
-        // Find Synonyms by Input
-        function findSynonyms() {
-            const word = document.getElementById('wordInput').value.toLowerCase().trim();
-            displaySynonyms(word);
-        }
-
-        // Display Synonyms for a Word
-        function displaySynonyms(word) {
-            const resultsElement = document.getElementById('results');
-            if (wordBank[word]) {
-                const synonyms = wordBank[word].join(", ");
-                resultsElement.innerHTML = `<h3>Synonyms for "${word}":</h3><p>${synonyms}</p>`;
-            } else {
-                resultsElement.innerHTML = `<h3>No synonyms found for "${word}".</h3>`;
-            }
-        }
-
-        // Grammar Checker Functionality
-        function checkGrammar() {
-            const input = document.getElementById('grammarInput').value.trim();
-            const grammarFeedbackElement = document.getElementById('grammarFeedback');
-
-            if (!input) {
-                grammarFeedbackElement.textContent = "Please enter a sentence.";
-                grammarFeedbackElement.style.color = "red";
-                return;
-            }
-
-            // Simple Grammar Check Example (length and punctuation)
-            const hasPunctuation = /[.!?]$/.test(input);
-            const feedback = [];
-
-            if (input.split(" ").length < 3) {
-                feedback.push("Your sentence is too short.");
-            }
-            if (!hasPunctuation) {
-                feedback.push("Your sentence needs proper punctuation.");
-            }
-
-            if (feedback.length > 0) {
-                grammarFeedbackElement.textContent = feedback.join(" ");
-                grammarFeedbackElement.style.color = "red";
-            } else {
-                grammarFeedbackElement.textContent = "Your sentence looks good!";
-                grammarFeedbackElement.style.color = "green";
-            }
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
