@@ -3,59 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Word Tools</title>
+    <title>Word Bank</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Interactive Word Tools</h1>
-    </header>
 
-    <main>
-        <!-- Word Bank Section -->
-        <section id="word-bank">
-            <h2>Word Bank</h2>
-            <p>Click on a word to see its synonyms and meaning.</p>
-            <ul id="word-list"></ul>
-        </section>
+<header>
+    <h1>Word Bank</h1>
+</header>
 
-        <!-- Synonym and Dictionary Result Section -->
-        <section id="results">
-            <h2>Results</h2>
-            <div id="synonymsResults">
-                <h3>Synonyms</h3>
-                <p id="synonyms-output">Select a word to see synonyms.</p>
-            </div>
-            <div id="dictionaryResults">
-                <h3>Definition</h3>
-                <p id="definition-output">Select a word to see the definition.</p>
-            </div>
-        </section>
+<main>
+    <!-- Synonym Finder Section -->
+    <section>
+        <h2>Synonym Finder</h2>
+        <label for="wordInput">Enter a word:</label>
+        <input type="text" id="wordInput" placeholder="Enter word">
+        <button onclick="findSynonyms()">Find Synonyms</button>
+        <div id="results" class="result-box"></div>
+    </section>
 
-        <!-- Grammar Checker Section -->
-        <section id="grammar-checker">
-            <h2>Grammar Checker</h2>
-            <textarea id="grammar-input" placeholder="Type a sentence to check for grammar."></textarea>
-            <button id="check-grammar" onclick="checkGrammar()">Check Grammar</button>
-            <div id="grammar-output"></div>
-        </section>
+    <!-- Word Bank Section -->
+    <section>
+        <h2>Word Bank</h2>
+        <div class="word-list" id="wordList"></div>
+    </section>
 
-        <!-- Linking Words Dictionary Section -->
-        <section id="linking-words">
-            <h2>Linking Words Dictionary</h2>
-            <div id="linking-words-box">
-                <p><strong>Moreover:</strong> Used to add further information or emphasize a point.</p>
-                <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
-                <p><strong>Therefore:</strong> Indicates a result or consequence.</p>
-                <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
-            </div>
-        </section>
-    </main>
+    <!-- Grammar Checker Section -->
+    <section>
+        <h2>Grammar Checker</h2>
+        <textarea id="grammar-input" placeholder="Enter a sentence"></textarea>
+        <button onclick="checkGrammar()">Check Grammar</button>
+        <div id="grammar-output"></div>
+    </section>
 
-    <footer>
-        <p>Interactive Word Tools © 2024</p>
-    </footer>
+    <!-- Linking Words Dictionary Section -->
+    <section id="linking-words">
+        <h2>Linking Words Dictionary</h2>
+        <div id="linking-words-box">
+            <p><strong>Moreover:</strong> Used to add further information or emphasize a point.</p>
+            <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
+            <p><strong>Therefore:</strong> Indicates a result or consequence.</p>
+            <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
+            <p><strong>However:</strong> Used to introduce a contrasting idea.</p>
+            <p>Example: "He wanted to join the team. <strong>However</strong>, he missed the tryouts."</p>
+        </div>
+    </section>
+</main>
 
-    <script src="app.js"></script>
+<footer>
+    <p>&copy; 2024 Word Bank</p>
+</footer>
+
+<script src="app.js"></script> <!-- Make sure this file is linked correctly -->
 </body>
 </html>
