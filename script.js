@@ -87,5 +87,53 @@ function checkGrammar() {
     }
 }
 
+// Function for Dictionary and Thesaurus Lookup
+async function searchDictionary() {
+    const word = document.getElementById("dictionary-input").value.trim();
+
+    if (!word) {
+        document.getElementById("thesaurusResults").innerText = "Please enter a word.";
+        document.getElementById("dictionaryResults").innerText = "";
+        return;
+    }
+
+    const thesaurusResults = document.getElementById("thesaurusResults");
+    const dictionaryResults = document.getElementById("dictionaryResults");
+
+    // Clear previous results
+    thesaurusResults.innerHTML = "";
+    dictionaryResults.innerHTML = "";
+
+    // Fetch results from a dictionary API (WordsAPI, Merriam-Webster, or other)
+    const apiKey = "your-api-key-here";  // Replace with your API key
+    const url = `https://api.wordsapi.com/v2/words/${word}`;
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "Authorization": `Bearer ${apiKey}`
+            }
+        });
+        const data = await response.json();
+
+        // Display Thesaurus Results (Synonyms)
+        if (data.synonyms) {
+            thesaurusResults.innerHTML = `<strong>Synonyms:</strong> ${data.synonyms.join(", ")}`;
+        } else {
+            thesaurusResults.innerText = "No synonyms found.";
+        }
+
+        // Display Dictionary Definition
+        if (data.definition) {
+            dictionaryResults.innerHTML = `<strong>Definition:</strong> ${data.definition}`;
+        } else {
+            dictionaryResults.innerText = "No definition found.";
+        }
+    } catch (error) {
+        thesaurusResults.innerText = "Error fetching data.";
+        dictionaryResults.innerText = "Error fetching data.";
+    }
+}
+
 // Initialize the word bank on page load
 document.addEventListener("DOMContentLoaded", populateWordBank);
