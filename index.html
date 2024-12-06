@@ -36,6 +36,7 @@
             border: 1px solid #ddd;
             background-color: #f1f1f1;
             cursor: pointer;
+            font-size: 16px;
         }
         .word-item:hover {
             background-color: #e0e0e0;
@@ -61,9 +62,7 @@
     <!-- Word List Section -->
     <div class="section">
         <h2>Click on a Word to Find Synonyms and Meaning</h2>
-        <div class="word-list">
-            <!-- Dynamically populated word items -->
-        </div>
+        <div class="word-list" id="wordList"></div>
     </div>
 
     <!-- Synonym and Meaning Section -->
@@ -135,7 +134,7 @@
 
         // Function to populate word list
         function populateWordList() {
-            const wordListContainer = document.querySelector('.word-list');
+            const wordListContainer = document.getElementById('wordList');
             for (let word in wordBank) {
                 const wordItem = document.createElement('div');
                 wordItem.classList.add('word-item');
