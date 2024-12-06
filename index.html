@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synonym Finder, Grammar Checker, and Dictionary</title>
+    <title>Synonym Finder and Dictionary</title>
     <style>
         /* Basic styling for the page */
         body {
@@ -25,125 +25,166 @@
         p {
             margin: 5px 0;
         }
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .word-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+        .word-item:hover {
+            background-color: #e0e0e0;
+        }
+        .linking-words {
+            margin-top: 20px;
+        }
+        .linking-word {
+            background-color: #f1f1f1;
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .linking-word:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
-    <h1>Synonym Finder, Grammar Checker, and Dictionary</h1>
+    <h1>Synonym Finder and Dictionary</h1>
 
-    <!-- Synonym Finder Section -->
+    <!-- Word List Section -->
     <div class="section">
-        <h2>Synonym Finder</h2>
-        <label for="wordInput">Enter a word for synonyms:</label>
-        <input type="text" id="wordInput" placeholder="Enter word">
-        <button onclick="getSynonyms()">Find Synonyms</button>
-        <div id="synonymsResult"></div>
+        <h2>Click on a Word to Find Synonyms and Meaning</h2>
+        <div class="word-list">
+            <!-- Dynamically populated word items -->
+        </div>
+    </div>
+
+    <!-- Synonym and Meaning Section -->
+    <div class="section">
+        <h2>Word Information</h2>
+        <div id="wordInfo">
+            <p>Select a word to see synonyms and meaning.</p>
+        </div>
+    </div>
+
+    <!-- Linking Words Section -->
+    <div class="section">
+        <h2>Linking Words Dictionary</h2>
+        <div class="linking-words">
+            <div class="linking-word" onclick="showLinkingWordInfo('Moreover')">
+                <strong>Moreover</strong>: Used to add further information or emphasize a point.
+            </div>
+            <div class="linking-word" onclick="showLinkingWordInfo('Therefore')">
+                <strong>Therefore</strong>: Indicates a result or consequence.
+            </div>
+            <!-- Add more linking words as needed -->
+        </div>
     </div>
 
     <!-- Grammar Checker Section -->
     <div class="section">
         <h2>Grammar Checker</h2>
-        <label for="grammarInput">Enter text for grammar check:</label>
-        <textarea id="grammarInput" placeholder="Enter your text here..." rows="5" cols="50"></textarea>
+        <textarea id="grammarTextArea" placeholder="Type or paste your text here..." rows="5" style="width: 100%;"></textarea>
         <button onclick="checkGrammar()">Check Grammar</button>
         <div id="grammarResult"></div>
     </div>
 
-    <!-- Linking Words Dictionary Section -->
-    <div class="section">
-        <h2>Linking Words Dictionary</h2>
-        <div class="result-box">
-            <p><strong>Moreover</strong>: Used to add further information or to emphasize a point.</p>
-            <p>Example: "The project requires a lot of research. <strong>Moreover</strong>, it demands creativity and time management."</p>
-            <p><strong>Therefore</strong>: Indicates a result or consequence.</p>
-            <p>Example: "She studied hard for the exam. <strong>Therefore</strong>, she passed with excellent marks."</p>
-            <p><strong>However</strong>: Used to introduce a contrast or contradiction.</p>
-            <p>Example: "I wanted to go to the park. <strong>However</strong>, it started to rain."</p>
-            <p><strong>Additionally</strong>: Used to add more information.</p>
-            <p>Example: "The company offers excellent benefits. <strong>Additionally</strong>, the work environment is fantastic."</p>
-            <p><strong>Consequently</strong>: Indicates a result or outcome.</p>
-            <p>Example: "She didn't submit the report on time. <strong>Consequently</strong>, her promotion was delayed."</p>
-        </div>
-    </div>
-
     <script>
-        // Internal Word Bank
+        // Word Bank with all words, synonyms, and meanings
         const wordBank = {
-            "affect": ["influence", "impact", "alter", "change", "modify"],
-            "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
-            "appreciate": ["value", "admire", "respect", "cherish", "recognize"],
-            "brilliant": ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
-            "benevolent": ["kind", "charitable", "compassionate", "generous", "altruistic"],
-            "blatant": ["obvious", "flagrant", "conspicuous", "glaring", "evident"],
-            "clever": ["smart", "intelligent", "bright", "witty", "sharp"],
-            "complicated": ["complex", "intricate", "involved", "convoluted", "tangled"],
-            "contemplate": ["ponder", "consider", "reflect", "think", "meditate"],
-            "diligent": ["hardworking", "industrious", "meticulous", "careful", "thorough"],
-            "devious": ["cunning", "sly", "tricky", "dishonest", "deceptive"],
-            "dramatic": ["theatrical", "intense", "expressive", "striking", "emotional"],
-            "eloquent": ["expressive", "articulate", "fluent", "persuasive", "well-spoken"],
-            "endorse": ["support", "approve", "advocate", "recommend", "back"],
-            "elusive": ["evasive", "tricky", "hard-to-find", "fleeting", "ambiguous"],
-            "famous": ["well-known", "renowned", "celebrated", "prominent", "distinguished"],
-            "fragile": ["delicate", "brittle", "frail", "vulnerable", "breakable"],
-            "flourish": ["thrive", "prosper", "blossom", "succeed", "expand"],
-            "generous": ["charitable", "kind", "giving", "benevolent", "magnanimous"],
-            "genuine": ["authentic", "real", "sincere", "honest", "true"],
-            "gratitude": ["thankfulness", "appreciation", "recognition", "gratefulness"],
-            "honest": ["truthful", "sincere", "straightforward", "candid", "open"],
-            "harmonious": ["peaceful", "balanced", "synchronized", "coordinated", "serene"],
-            "hasty": ["rushed", "hurried", "quick", "impulsive", "swift"],
-            "intelligent": ["smart", "bright", "sharp", "clever", "insightful"],
-            "impressive": ["remarkable", "striking", "stunning", "noteworthy", "extraordinary"],
-            "incredible": ["unbelievable", "astonishing", "amazing", "remarkable", "phenomenal"],
-            "joyful": ["happy", "cheerful", "delighted", "blissful", "content"],
-            "peaceful": ["calm", "serene", "tranquil", "gentle", "harmonious"],
-            "debris": ["wreckage", "rubble", "remains", "shards", "fragments"],
-            "time": ["period", "moment", "duration", "epoch", "era"],
-            "distance": ["length", "range", "interval", "gap", "space"]
+            "affect": { synonyms: ["influence", "impact", "alter", "change", "modify"], meaning: "To have an effect on something or someone." },
+            "ambiguous": { synonyms: ["unclear", "vague", "indistinct", "uncertain", "obscure"], meaning: "Open to more than one interpretation, unclear." },
+            "appreciate": { synonyms: ["value", "admire", "respect", "cherish", "recognize"], meaning: "To recognize the value of something or someone." },
+            "brilliant": { synonyms: ["intelligent", "bright", "outstanding", "exceptional", "dazzling"], meaning: "Exceptionally clever or talented." },
+            "benevolent": { synonyms: ["kind", "charitable", "compassionate", "generous", "altruistic"], meaning: "Well-meaning and kindly." },
+            "blatant": { synonyms: ["obvious", "flagrant", "conspicuous", "glaring", "evident"], meaning: "Done openly and unashamedly." },
+            "clever": { synonyms: ["smart", "intelligent", "bright", "witty", "sharp"], meaning: "Quick to learn or understand." },
+            "complicated": { synonyms: ["complex", "intricate", "involved", "convoluted", "tangled"], meaning: "Not easy to understand or analyze." },
+            "contemplate": { synonyms: ["ponder", "consider", "reflect", "think", "meditate"], meaning: "To think deeply about something." },
+            "diligent": { synonyms: ["hardworking", "industrious", "meticulous", "careful", "thorough"], meaning: "Showing persistence and careful attention to detail." },
+            "devious": { synonyms: ["cunning", "sly", "tricky", "dishonest", "deceptive"], meaning: "Dishonestly clever or skillful in achieving goals." },
+            "dramatic": { synonyms: ["theatrical", "intense", "expressive", "striking", "emotional"], meaning: "Relating to or characteristic of drama or the theater." },
+            "eloquent": { synonyms: ["expressive", "articulate", "fluent", "persuasive", "well-spoken"], meaning: "Fluent or persuasive in speaking or writing." },
+            "endorse": { synonyms: ["support", "approve", "advocate", "recommend", "back"], meaning: "To express formal support for something." },
+            "elusive": { synonyms: ["evasive", "tricky", "hard-to-find", "fleeting", "ambiguous"], meaning: "Difficult to find or understand." },
+            "famous": { synonyms: ["well-known", "renowned", "celebrated", "prominent", "distinguished"], meaning: "Known by many people." },
+            "fragile": { synonyms: ["delicate", "brittle", "frail", "vulnerable", "breakable"], meaning: "Easily broken or damaged." },
+            "flourish": { synonyms: ["thrive", "prosper", "blossom", "succeed", "expand"], meaning: "To grow or develop in a healthy or vigorous way." },
+            "generous": { synonyms: ["charitable", "kind", "giving", "benevolent", "magnanimous"], meaning: "Showing a readiness to give more of something." },
+            "genuine": { synonyms: ["authentic", "real", "sincere", "honest", "true"], meaning: "Truly what something is said to be; authentic." },
+            "gratitude": { synonyms: ["thankfulness", "appreciation", "recognition", "gratefulness"], meaning: "The quality of being thankful." },
+            "honest": { synonyms: ["truthful", "sincere", "straightforward", "candid", "open"], meaning: "Free from deceit or untruthfulness." },
+            "harmonious": { synonyms: ["peaceful", "balanced", "synchronized", "coordinated", "serene"], meaning: "Forming a pleasing or consistent whole." },
+            "hasty": { synonyms: ["rushed", "hurried", "quick", "impulsive", "swift"], meaning: "Done or acting with excessive speed." },
+            "intelligent": { synonyms: ["smart", "bright", "sharp", "clever", "insightful"], meaning: "Having or showing a high level of mental ability." },
+            "impressive": { synonyms: ["remarkable", "striking", "stunning", "noteworthy", "extraordinary"], meaning: "Evoking admiration through size, quality, or skill." },
+            "incredible": { synonyms: ["unbelievable", "astonishing", "amazing", "remarkable", "phenomenal"], meaning: "So extraordinary as to seem impossible." },
+            "joyful": { synonyms: ["happy", "cheerful", "delighted", "blissful", "content"], meaning: "Full of happiness and joy." },
+            "peaceful": { synonyms: ["calm", "serene", "tranquil", "gentle", "harmonious"], meaning: "Free from disturbance or noise." },
+            "debris": { synonyms: ["wreckage", "rubble", "remains", "shards", "fragments"], meaning: "Scattered pieces of something that has been destroyed." },
+            "time": { synonyms: ["period", "moment", "duration", "epoch", "era"], meaning: "A point or period when something occurs." },
+            "distance": { synonyms: ["length", "range", "interval", "gap", "space"], meaning: "The amount of space between two points." }
         };
 
-        // Synonym Finder Function
-        function getSynonyms() {
-            const inputWord = document.getElementById("wordInput").value.trim().toLowerCase();
-            const resultDiv = document.getElementById("synonymsResult");
-
-            // Search for synonyms in the word bank (case-insensitive)
-            if (inputWord && wordBank[inputWord]) {
-                const synonyms = wordBank[inputWord];
-                resultDiv.innerHTML = `<strong>Synonyms for "${inputWord}":</strong> ${synonyms.join(", ")}`;
-            } else {
-                resultDiv.innerHTML = `No synonyms found for "${inputWord}".`;
+        // Function to populate word list
+        function populateWordList() {
+            const wordListContainer = document.querySelector('.word-list');
+            for (let word in wordBank) {
+                const wordItem = document.createElement('div');
+                wordItem.classList.add('word-item');
+                wordItem.textContent = word;
+                wordItem.onclick = () => showWordInfo(word);
+                wordListContainer.appendChild(wordItem);
             }
         }
 
-        // Grammar Checker Function (basic checks)
+        // Function to show the synonyms and meaning of the selected word
+        function showWordInfo(word) {
+            const wordInfoContainer = document.getElementById('wordInfo');
+            const wordData = wordBank[word];
+
+            if (wordData) {
+                wordInfoContainer.innerHTML = `
+                    <h3><strong>${word.charAt(0).toUpperCase() + word.slice(1)}</strong></h3>
+                    <p><strong>Meaning:</strong> ${wordData.meaning}</p>
+                    <p><strong>Synonyms:</strong> ${wordData.synonyms.join(', ')}</p>
+                `;
+            } else {
+                wordInfoContainer.innerHTML = "<p>No information found for this word.</p>";
+            }
+        }
+
+        // Grammar Checker - Simple function to check for common grammar mistakes
         function checkGrammar() {
-            const text = document.getElementById("grammarInput").value.trim();
-            const resultDiv = document.getElementById("grammarResult");
+            const text = document.getElementById('grammarTextArea').value;
+            const resultDiv = document.getElementById('grammarResult');
 
-            if (!text) {
-                resultDiv.innerHTML = "Please enter some text to check.";
-                return;
-            }
-
+            // A basic grammar check to find errors (this is just a simple example)
             const mistakes = [];
-            if (text.includes(" its ") && !text.includes("it's ")) {
-                mistakes.push("Did you mean 'it's' instead of 'its'?");
+
+            if (!text.match(/[A-Z]/)) {
+                mistakes.push("The text should start with a capital letter.");
             }
-            if (text.includes(" theyre ") && !text.includes("they're ")) {
-                mistakes.push("Did you mean 'they're' instead of 'theyre'?");
+            if (text.match(/(\s){2,}/)) {
+                mistakes.push("There are extra spaces in the text.");
             }
 
             if (mistakes.length > 0) {
-                resultDiv.innerHTML = "<strong>Grammar Issues:</strong><ul>";
-                mistakes.forEach(issue => {
-                    resultDiv.innerHTML += `<li>${issue}</li>`;
-                });
-                resultDiv.innerHTML += "</ul>";
+                resultDiv.innerHTML = "<p><strong>Possible Issues:</strong></p><ul>" + mistakes.map(m => `<li>${m}</li>`).join('') + "</ul>";
             } else {
-                resultDiv.innerHTML = "No grammar issues found!";
+                resultDiv.innerHTML = "<p>No grammar issues found!</p>";
             }
         }
+
+        // Initialize the word list
+        populateWordList();
     </script>
 </body>
 </html>
