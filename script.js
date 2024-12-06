@@ -1,151 +1,37 @@
-// Internal Word Bank with synonyms and definitions
+// Word Bank with Synonyms and Meanings
 const wordBank = {
-    "affect": {
-        synonyms: ["influence", "impact", "alter", "change", "modify"],
-        definition: "To produce a change or influence something."
-    },
-    "ambiguous": {
-        synonyms: ["unclear", "vague", "indistinct", "uncertain", "obscure"],
-        definition: "Open to more than one interpretation; not having one obvious meaning."
-    },
-    "appreciate": {
-        synonyms: ["value", "admire", "respect", "cherish", "recognize"],
-        definition: "To recognize the value or significance of something."
-    },
-    "brilliant": {
-        synonyms: ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
-        definition: "Exceptionally clever or talented."
-    },
-    "benevolent": {
-        synonyms: ["kind", "charitable", "compassionate", "generous", "altruistic"],
-        definition: "Well-meaning and kindly."
-    },
-    "time": {
-        synonyms: ["period", "moment", "duration", "epoch", "era"],
-        definition: "The indefinite continued progress of existence and events."
-    },
-    "peaceful": {
-        synonyms: ["calm", "serene", "tranquil", "gentle", "harmonious"],
-        definition: "Free from disturbance; tranquil."
-    },
-    "debris": {
-        synonyms: ["wreckage", "rubble", "remains", "shards", "fragments"],
-        definition: "Scattered fragments, typically of something wrecked or destroyed."
-    },
-    "distance": {
-        synonyms: ["length", "range", "interval", "gap", "space"],
-        definition: "An amount of space between two things or people."
-    }
-};
-
-// Function to populate the word bank as a clickable list
-function populateWordBank() {
-    const wordList = document.getElementById("word-list");
-    const words = Object.keys(wordBank).sort(); // Alphabetical order
-
-    words.forEach(word => {
-        const listItem = document.createElement("li");
-        listItem.textContent = word;
-        listItem.classList.add("word-item");
-        listItem.onclick = () => displayWordDetails(word);
-        wordList.appendChild(listItem);
-    });
-}
-
-// Function to display synonyms and definitions for a clicked word
-function displayWordDetails(word) {
-    const wordData = wordBank[word];
-
-    if (wordData) {
-        document.getElementById("synonyms-output").innerText = wordData.synonyms.join(", ");
-        document.getElementById("definition-output").innerText = wordData.definition;
-    } else {
-        document.getElementById("synonyms-output").innerText = "No synonyms found.";
-        document.getElementById("definition-output").innerText = "No definition found.";
-    }
-}
-
-// Grammar Checker Function
-function checkGrammar() {
-    const text = document.getElementById("grammar-input").value;
-    const grammarOutput = document.getElementById("grammar-output");
-
-    if (text.trim() === "") {
-        grammarOutput.innerText = "Please enter a sentence.";
-        return;
-    }
-
-    // Simple check for basic grammar issues
-    const issues = [];
-    if (!text.endsWith(".")) issues.push("Sentence should end with a period.");
-    if (text.charAt(0) !== text.charAt(0).toUpperCase()) issues.push("Sentence should start with a capital letter.");
-
-    if (issues.length > 0) {
-        grammarOutput.innerText = "Grammar Issues: \n" + issues.join("\n");
-    } else {
-        grammarOutput.innerText = "Grammar looks good!";
-    }
-}
-
-// Function for Dictionary and Thesaurus Lookup
-async function searchDictionary() {
-    const word = document.getElementById("dictionary-input").value.trim();
-
-    if (!word) {
-        document.getElementById("thesaurusResults").innerText = "Please enter a word.";
-        document.getElementById("dictionaryResults").innerText = "";
-        return;
-    }
-
-    const thesaurusResults = document.getElementById("thesaurusResults");
-    const dictionaryResults = document.getElementById("dictionaryResults");
-
-    // Clear previous results
-    thesaurusResults.innerHTML = "";
-    dictionaryResults.innerHTML = "";
-
-    // Fetch results from a dictionary API (WordsAPI, Merriam-Webster, or other)
-    const apiKey = "your-api-key-here";  // Replace with your API key
-    const url = `https://api.wordsapi.com/v2/words/${word}`;
-
-    try {
-        const response = await fetch(url, {
-            headers: {
-                "Authorization": `Bearer ${apiKey}`
-            }
-        });
-        const data = await response.json();
-
-        // Display Thesaurus Results (Synonyms)
-        if (data.synonyms) {
-            thesaurusResults.innerHTML = `<strong>Synonyms:</strong> ${data.synonyms.join(", ")}`;
-        } else {
-            thesaurusResults.innerText = "No synonyms found.";
-        }
-
-        // Display Dictionary Definition
-        if (data.definition) {
-            dictionaryResults.innerHTML = `<strong>Definition:</strong> ${data.definition}`;
-        } else {
-            dictionaryResults.innerText = "No definition found.";
-        }
-    } catch (error) {
-        thesaurusResults.innerText = "Error fetching data.";
-        dictionaryResults.innerText = "Error fetching data.";
-    }
-}
-
-// Initialize the word bank on page load
-document.addEventListener("DOMContentLoaded", populateWordBank);
-// Word Bank Data
-const wordBank = {
-    "affect": ["influence", "impact", "alter", "change", "modify"],
-    "ambiguous": ["unclear", "vague", "indistinct", "uncertain", "obscure"],
-    "appreciate": ["value", "admire", "respect", "cherish", "recognize"],
-    "brilliant": ["intelligent", "bright", "outstanding", "exceptional", "dazzling"],
-    "benevolent": ["kind", "charitable", "compassionate", "generous", "altruistic"],
-    "time": ["period", "moment", "duration", "epoch", "era"],
-    "distance": ["length", "range", "interval", "gap", "space"]
+    "affect": { synonyms: ["influence", "impact", "alter", "change", "modify"], meaning: "To have an effect on something or someone." },
+    "ambiguous": { synonyms: ["unclear", "vague", "indistinct", "uncertain", "obscure"], meaning: "Open to more than one interpretation, unclear." },
+    "appreciate": { synonyms: ["value", "admire", "respect", "cherish", "recognize"], meaning: "To recognize the value of something or someone." },
+    "brilliant": { synonyms: ["intelligent", "bright", "outstanding", "exceptional", "dazzling"], meaning: "Exceptionally clever or talented." },
+    "benevolent": { synonyms: ["kind", "charitable", "compassionate", "generous", "altruistic"], meaning: "Well-meaning and kindly." },
+    "blatant": { synonyms: ["obvious", "flagrant", "conspicuous", "glaring", "evident"], meaning: "Done openly and unashamedly." },
+    "clever": { synonyms: ["smart", "intelligent", "bright", "witty", "sharp"], meaning: "Quick to learn or understand." },
+    "complicated": { synonyms: ["complex", "intricate", "involved", "convoluted", "tangled"], meaning: "Not easy to understand or analyze." },
+    "contemplate": { synonyms: ["ponder", "consider", "reflect", "think", "meditate"], meaning: "To think deeply about something." },
+    "diligent": { synonyms: ["hardworking", "industrious", "meticulous", "careful", "thorough"], meaning: "Showing persistence and careful attention to detail." },
+    "devious": { synonyms: ["cunning", "sly", "tricky", "dishonest", "deceptive"], meaning: "Dishonestly clever or skillful in achieving goals." },
+    "dramatic": { synonyms: ["theatrical", "intense", "expressive", "striking", "emotional"], meaning: "Relating to or characteristic of drama or the theater." },
+    "eloquent": { synonyms: ["expressive", "articulate", "fluent", "persuasive", "well-spoken"], meaning: "Fluent or persuasive in speaking or writing." },
+    "endorse": { synonyms: ["support", "approve", "advocate", "recommend", "back"], meaning: "To express formal support for something." },
+    "elusive": { synonyms: ["evasive", "tricky", "hard-to-find", "fleeting", "ambiguous"], meaning: "Difficult to find or understand." },
+    "famous": { synonyms: ["well-known", "renowned", "celebrated", "prominent", "distinguished"], meaning: "Known by many people." },
+    "fragile": { synonyms: ["delicate", "brittle", "frail", "vulnerable", "breakable"], meaning: "Easily broken or damaged." },
+    "flourish": { synonyms: ["thrive", "prosper", "blossom", "succeed", "expand"], meaning: "To grow or develop in a healthy or vigorous way." },
+    "generous": { synonyms: ["charitable", "kind", "giving", "benevolent", "magnanimous"], meaning: "Showing a readiness to give more of something." },
+    "genuine": { synonyms: ["authentic", "real", "sincere", "honest", "true"], meaning: "Truly what something is said to be; authentic." },
+    "gratitude": { synonyms: ["thankfulness", "appreciation", "recognition", "gratefulness"], meaning: "The quality of being thankful." },
+    "honest": { synonyms: ["truthful", "sincere", "straightforward", "candid", "open"], meaning: "Free from deceit or untruthfulness." },
+    "harmonious": { synonyms: ["peaceful", "balanced", "synchronized", "coordinated", "serene"], meaning: "Forming a pleasing or consistent whole." },
+    "hasty": { synonyms: ["rushed", "hurried", "quick", "impulsive", "swift"], meaning: "Done or acting with excessive speed." },
+    "intelligent": { synonyms: ["smart", "bright", "sharp", "clever", "insightful"], meaning: "Having or showing a high level of mental ability." },
+    "impressive": { synonyms: ["remarkable", "striking", "stunning", "noteworthy", "extraordinary"], meaning: "Evoking admiration through size, quality, or skill." },
+    "incredible": { synonyms: ["unbelievable", "astonishing", "amazing", "remarkable", "phenomenal"], meaning: "So extraordinary as to seem impossible." },
+    "joyful": { synonyms: ["happy", "cheerful", "delighted", "blissful", "content"], meaning: "Full of happiness and joy." },
+    "peaceful": { synonyms: ["calm", "serene", "tranquil", "gentle", "harmonious"], meaning: "Free from disturbance or noise." },
+    "debris": { synonyms: ["wreckage", "rubble", "remains", "shards", "fragments"], meaning: "Scattered pieces of waste or remains." },
+    "time": { synonyms: ["period", "moment", "duration", "epoch", "era"], meaning: "A point or period when something occurs." },
+    "distance": { synonyms: ["length", "range", "interval", "gap", "space"], meaning: "The amount of space between two points." }
 };
 
 // Initialize Word List on Page Load
@@ -166,18 +52,19 @@ function findSynonyms() {
     displaySynonyms(word);
 }
 
-// Display Synonyms for a Word
+// Display Synonyms and Meanings for a Word
 function displaySynonyms(word) {
     const resultsElement = document.getElementById('results');
     if (wordBank[word]) {
-        const synonyms = wordBank[word].join(", ");
-        resultsElement.innerHTML = `<h3>Synonyms for "${word}":</h3><p>${synonyms}</p>`;
+        const synonyms = wordBank[word].synonyms.join(", ");
+        const meaning = wordBank[word].meaning;
+        resultsElement.innerHTML = `<h3>Synonyms for "${word}":</h3><p>${synonyms}</p><h4>Meaning:</h4><p>${meaning}</p>`;
     } else {
         resultsElement.innerHTML = `<h3>No synonyms found for "${word}".</h3>`;
     }
 }
 
-// Grammar Checker Functionality
+// Grammar Checker Functionality (Basic)
 function checkGrammar() {
     const input = document.getElementById('grammar-input').value.trim();
     const grammarFeedbackElement = document.getElementById('grammar-output');
@@ -188,17 +75,26 @@ function checkGrammar() {
         return;
     }
 
-    // Simple Grammar Check Example (length and punctuation)
-    const hasPunctuation = /[.!?]$/.test(input);
     const feedback = [];
+    const spellingMistakes = findSpellingMistakes(input);
 
-    if (input.split(" ").length < 3) {
-        feedback.push("Your sentence is too short.");
-    }
+    // Check for missing punctuation
+    const hasPunctuation = /[.!?]$/.test(input);
     if (!hasPunctuation) {
         feedback.push("Your sentence needs proper punctuation.");
     }
 
+    // Check if the sentence is too short
+    if (input.split(" ").length < 3) {
+        feedback.push("Your sentence is too short.");
+    }
+
+    // Check for spelling mistakes
+    if (spellingMistakes.length > 0) {
+        feedback.push(`Spelling mistakes: ${spellingMistakes.join(", ")}`);
+    }
+
+    // Provide feedback to user
     if (feedback.length > 0) {
         grammarFeedbackElement.textContent = feedback.join(" ");
         grammarFeedbackElement.style.color = "red";
@@ -206,4 +102,19 @@ function checkGrammar() {
         grammarFeedbackElement.textContent = "Your sentence looks good!";
         grammarFeedbackElement.style.color = "green";
     }
+}
+
+// Simple Spelling Checker (for demonstration purposes)
+function findSpellingMistakes(sentence) {
+    const dictionary = Object.keys(wordBank); // Use keys from the wordBank as dictionary words
+    const words = sentence.split(/\s+/);
+    const mistakes = [];
+
+    words.forEach(word => {
+        if (!dictionary.includes(word.toLowerCase())) {
+            mistakes.push(word);
+        }
+    });
+
+    return mistakes;
 }
